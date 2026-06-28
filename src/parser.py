@@ -36,16 +36,6 @@ class Config(BaseModel):
     seed: int = Field(default=42)
     level_max_time: int = Field(default=90, ge=30)
 
-    @model_validator(mode="after")
-    def validate_points(self) -> "Config":
-        if not (
-            self.points_per_pacgum
-            < self.points_per_super_pacgum
-            < self.points_per_ghost
-        ):
-            raise ValueError("Score point : pacgum < super pacgum < ghost")
-        return self
-
 
 class Parser:
     """Load and validate game config from a JSON file"""
