@@ -3,6 +3,8 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+FPS = 60
+
 SCREEN_WIDTH = 960
 SCREEN_HEIGHT = 640
 CELL_SIZE = 25

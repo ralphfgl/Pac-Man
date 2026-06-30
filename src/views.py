@@ -266,56 +266,6 @@ class GameOverView(View):
         self.screen.blit(back, back_rect)
 
 
-# class GameOverView(View):
-#     def __init__(self, screen, config):
-#         super().__init__(screen, config)
-#         self.score = 0
-#         self.selected_item = 0
-#         self.menu_items = [
-#             ("Play Again", GameState.PLAYING),
-#             ("Main Menu", GameState.MAIN_MENU),
-#         ]
-#         self.state = "enter_name"
-#         self.player_name = ""
-#         self.name_entered = False
-#         self.highscore_filename = config.highscore_filename
-#
-#     def set_score(self, score):
-#         self.score = score
-#         self.state = "enter_name"
-#         self.player_name = ""
-#         self.name_entered = False
-#
-#     def handle_event(self, events):
-#         for event in events:
-#             if event.type == pygame.KEYDOWN:
-#                 if event.key == pygame.K_UP:
-#                     self.selected_item = (self.selected_item - 1) % len(
-#                         self.menu_items
-#                     )
-#                 elif event.key == pygame.K_DOWN:
-#                     self.selected_item = (self.selected_item + 1) % len(
-#                         self.menu_items
-#                     )
-#                 elif event.key == pygame.K_RETURN:
-#                     _, self.next_state = self.menu_items[self.selected_item]
-#
-#     def draw(self):
-#         self.screen.fill(BLACK)
-#         game_over = self.font.render("GAME OVER", True, RED)
-#         game_over_rect = game_over.get_rect(center=(SCREEN_WIDTH // 2, 150))
-#         self.screen.blit(game_over, game_over_rect)
-#         score_text = self.font.render(f"Score: {self.score}", True, WHITE)
-#         score_rect = score_text.get_rect(center=(SCREEN_WIDTH // 2, 250))
-#         self.screen.blit(score_text, score_rect)
-#
-#         for i, (text, _) in enumerate(self.menu_items):
-#             color = GREEN if i == self.selected_item else WHITE
-#             item = self.font.render(text, True, color)
-#             item_rect = item.get_rect(center=(SCREEN_WIDTH // 2, 350 + i * 80))
-#             self.screen.blit(item, item_rect)
-
-
 class GameplayView(View):
     """Main game view with maze"""
 
@@ -501,7 +451,7 @@ if __name__ == "__main__":
 
         current_view.draw()
         pygame.display.flip()
-        clock.tick(60)
+        clock.tick(FPS)
 
     pygame.quit()
     sys.exit()
