@@ -5,9 +5,6 @@ from typing import List, Any
 import random
 import sys
 
-#
-#
-
 
 class Cellule:
     """Structure with cell data"""
