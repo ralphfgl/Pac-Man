@@ -1,20 +1,26 @@
 import pygame
 import classforthegame
-import mazegen
-import sys
+from mazegenerator import MazeGenerator
+from maze_wrapper import MazeLoader, LvlConfig
+import asset
+
+level = LvlConfig(width=16, height=12, seed=42)
+maze_loader = MazeLoader(level)
+maze = maze_loader.load()
+
 
 pygame.init()
-taille = (640, 480)
-pygame.display.set_caption("pac_moulinette")
+taille = (480, 480)
+pygame.display.set_caption(asset.DRAGON_PATH)
 fenetre = pygame.display.set_mode(taille, pygame.RESIZABLE)
-fond = pygame.image.load("maze.jpg").convert()
-image_moulinette = pygame.image.load("knight_cat.png").convert_alpha()
-image_stu = pygame.image.load("dragon.png").convert_alpha()
-image_piscin = pygame.image.load("Eliot.png").convert_alpha()
-maze = mazegen.MazeGenerator(sys.argv[1])
+fond = pygame.image.load(asset.MAZE_PATH).convert()
+image_moulinette = pygame.image.load(asset.KNIGHT_PATH).convert_alpha()
+image_stu = pygame.image.load(asset.DRAGON_PATH).convert_alpha()
+image_piscin = pygame.image.load(asset.ELIOT_PATH).convert_alpha()
+image_wall = pygame.image.load(asset.WALL_PATH).convert_alpha()
 game = True
 right = up = down = left = False
-moulinette = classforthegame.Moulinette(maze)
+moulinette = classforthegame.Moulinette()
 stu = classforthegame.Stud()
 piscin = classforthegame.Piscineux()
 pos_moulinette = moulinette.pos
@@ -36,11 +42,14 @@ while game:
             if event.key == pygame.K_UP:
                 left = right = down = False
                 up = True
-    pos_moulinette = moulinette.mouve(right, left, down, up)
+    pos_wall = (100, 100)
+    pos_moulinette = moulinette.mouve(right, left, down, up, pos_wall)
     pos_stu = stu.mouve()
     pos_piscin = piscin.mouve(pos_moulinette)
     fenetre.blit(fond, (0, 0))
     fenetre.blit(image_moulinette, pos_moulinette)
     fenetre.blit(image_stu, pos_stu)
     fenetre.blit(image_piscin, pos_piscin)
+    fenetre.blit(image_wall, pos_wall)
     pygame.display.flip()
+print(maze.themaze[0][0].walls)

@@ -1,0 +1,5 @@
+DRAGON_PATH = "asset/dragon.png"
+ELIOT_PATH = "asset/Eliot.png"
+MAZE_PATH = "asset/maze.jpg"
+KNIGHT_PATH = "asset/knight_cat.png"
+WALL_PATH = "asset/wall_full.png"

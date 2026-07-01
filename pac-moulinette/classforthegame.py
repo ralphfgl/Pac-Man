@@ -61,7 +61,7 @@ class Stud(Perssonage):
             access: int = 1,
             pv: int = 100,
             atk: int = 50,
-            vitesse: int = 0.2,
+            vitesse: int = 1,
             dir: str = "Rien",
             life: int = 1,
             pace: int = 4,
@@ -106,15 +106,30 @@ class Stud(Perssonage):
             self.vitesse = self.vitesse * 2
             self.pace -= 1
 
+    def open_gate(self, room: int, way: str) -> bool:
+        """Open wall of both cell of an edge"""
+        if way == "N":
+            if room & 0b1:
+                return False
+        elif way == "W":
+            return True
+        elif way == "E":
+            if (room >> 1) & 0b1:
+                return False
+        elif way == "S":
+            if (room >> 2) & 0b1:
+                return False
+        return True
+
     def mouve(self) -> List:
         direction = ["W", "E", "N", "S"]
         if self.pos[0] <= 0:
             direction.remove("W")
-        if self.pos[0] >= 480:
+        if self.pos[0] + 80 >= 480:
             direction.remove("E")
         if self.pos[1] <= 0:
             direction.remove("N")
-        if self.pos[1] >= 480:
+        if self.pos[1] + 80 >= 480:
             direction.remove("S")
         if self.dir not in direction:
             direction = random.choice(direction)
@@ -227,12 +242,18 @@ class Moulinette(Perssonage):
     def spe(self):
         pass
 
-    def mouve(self, right: bool, left: bool, down: bool, up: bool) -> List:
-        if right is True and self.pos[0] < 480:
+    def colision(self, wall: tuple) -> bool:
+        if self.pos[0] + 80 <= wall[0] + 34 and self.pos[0] + 80 >= wall[0]:
+            if self.pos[1] + 80 <= wall[1] + 34 and self.pos[1] + 80 >= wall[1]:
+                return True
+        return False
+
+    def mouve(self, right: bool, left: bool, down: bool, up: bool, wall: tuple) -> List:
+        if right is True and self.pos[0] + 80 <= 480 and self.colision(wall) is False:
             self.pos[0] += self.vitesse
         if left is True and self.pos[0] > 0:
             self.pos[0] -= self.vitesse
-        if down is True and self.pos[1] < 480:
+        if down is True and self.pos[1] + 80 <= 480:
             self.pos[1] += self.vitesse
         if up is True and self.pos[1] > 0:
             self.pos[1] -= self.vitesse
