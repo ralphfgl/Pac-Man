@@ -3,9 +3,6 @@ from abc import abstractmethod
 import random
 from maze_wrapper import MazeLoader, LvlConfig
 
-level = LvlConfig(width=16, height=12, seed=42)
-maze_loader = MazeLoader(level)
-maze = maze_loader.load()
 
 class Perssonage():
     def __init__(
@@ -109,44 +106,53 @@ class Stud(Perssonage):
             self.vitesse = self.vitesse * 2
             self.pace -= 1
 
-    def open_gate(self, room: int, way: str) -> bool:
-        """Open wall of both cell of an edge"""
+    def open_gate(self, pos: List, way: str) -> bool:
+        level = LvlConfig(width=16, height=12, seed=42)
+        maze_loader = MazeLoader(level)
+        maze = maze_loader.load()
         if way == "N":
-            if room & 0b1:
-                return False
+            if maze.themaze[pos[0]][pos[1]].walls & 0b1:
+                return True
         elif way == "W":
-            return True
+            if (maze.themaze[pos[0]][pos[1]].walls >> 3) & 0b1:
+                return True
         elif way == "E":
-            if (room >> 1) & 0b1:
-                return False
+            if (maze.themaze[pos[0]][pos[1]].walls >> 1) & 0b1:
+                return True
         elif way == "S":
-            if (room >> 2) & 0b1:
-                return False
-        return True
+            if (maze.themaze[pos[0]][pos[1]].walls >> 2) & 0b1:
+                return True
+        return False
 
     def mouve(self) -> List:
         direction = ["W", "E", "N", "S"]
-        pos = 
-        if self.pos[0] <= 0:
+        pos = []
+        pos.append(self.pos[0] // 80)
+        pos.append(self.pos[1] // 80)
+        if self.pos[0] <= 0 or self.open_gate(pos, "W"):
             direction.remove("W")
-        if self.pos[0] + 80 >= 1280:
+        if self.pos[0] + 80 >= 1280 or self.open_gate(pos, "E"):
             direction.remove("E")
-        if self.pos[1] <= 0:
+        if self.pos[1] <= 0 or self.open_gate(pos, "N"):
             direction.remove("N")
-        if self.pos[1] + 80 >= 960:
+        if self.pos[1] + 80 >= 960 or self.open_gate(pos, "S"):
             direction.remove("S")
         if self.dir not in direction:
             direction = random.choice(direction)
+            self.dir = direction
             return self.chose_dir(direction)
-        elif self.dir == "W":
+        if self.dir == "W" and "E" in direction:
             direction.remove("E")
-        elif self.dir == "E":
+        elif self.dir == "E" and "W" in direction:
             direction.remove("W")
-        elif self.dir == "S":
+        elif self.dir == "S" and "N" in direction:
             direction.remove("N")
-        elif self.dir == "N":
+        elif self.dir == "N" and "S" in direction:
             direction.remove("S")
+        print(direction)
         direction = random.choice(direction)
+        self.dir = direction
+        print(self.dir)
         return self.chose_dir(direction)
 
 
@@ -252,7 +258,37 @@ class Moulinette(Perssonage):
                 return True
         return False
 
+    def open_gate(self, pos: List, way: str) -> bool:
+        level = LvlConfig(width=16, height=12, seed=42)
+        maze_loader = MazeLoader(level)
+        maze = maze_loader.load()
+        if way == "N":
+            if maze.themaze[pos[0]][pos[1]].walls & 0b1:
+                return True
+        elif way == "W":
+            if (maze.themaze[pos[0]][pos[1]].walls >> 3) & 0b1:
+                return True
+        elif way == "E":
+            if (maze.themaze[pos[0]][pos[1]].walls >> 1) & 0b1:
+                return True
+        elif way == "S":
+            if (maze.themaze[pos[0]][pos[1]].walls >> 2) & 0b1:
+                return True
+        return False
+
+
     def mouve(self, right: bool, left: bool, down: bool, up: bool, wall: tuple) -> List:
+        pos = []
+        pos.append(self.pos[0] // 80)
+        pos.append(self.pos[1] // 80)
+        if self.pos[0] <= 0 or self.open_gate(pos, "W"):
+            left = False
+        if self.pos[0] + 80 >= 1280 or self.open_gate(pos, "E"):
+            right = False
+        if self.pos[1] <= 0 or self.open_gate(pos, "N"):
+            up = False
+        if self.pos[1] + 80 >= 960 or self.open_gate(pos, "S"):
+            down = False
         if right is True and self.pos[0] + 80 <= 1280:
             self.pos[0] += self.vitesse
         if left is True and self.pos[0] > 0:
