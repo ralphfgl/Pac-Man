@@ -24,17 +24,6 @@ class Maze:
         self.height: int = height
         self.themaze: List[List[Cellule]] = themaze
 
-    def open_gate(self, room: int, way: str) -> bool:
-        if way == "N":
-            return not room & 0b1
-        elif way == "W":
-            return not (room >> 3) & 0b1
-        elif way == "E":
-            return not (room >> 1) & 0b1
-        elif way == "S":
-            return not (room >> 2) & 0b1
-        return False
-
 
 class MazeLoader:
     """Load the level config and generates the maze"""

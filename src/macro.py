@@ -5,9 +5,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 FPS = 60
 
-SCREEN_WIDTH = 960
-SCREEN_HEIGHT = 640
-CELL_SIZE = 25
+SCREEN_WIDTH = 1080
+SCREEN_HEIGHT = 720
+CELL_SIZE = 30
 
 BLACK = (0, 0, 0)
 GRAY = (128, 128, 128)

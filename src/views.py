@@ -297,9 +297,7 @@ class GameplayView(View):
             self.maze.width * CELL_SIZE // 2, self.maze.height * CELL_SIZE // 2
         )
         self.offset_x = (SCREEN_WIDTH - self.maze.width * CELL_SIZE) // 2
-        self.offset_y = (
-            SCREEN_HEIGHT - 100 - self.maze.height * CELL_SIZE
-        ) // 2
+        self.offset_y = (SCREEN_HEIGHT - self.maze.height * CELL_SIZE) // 2
 
     def handle_event(self, events):
         for event in events:
@@ -374,10 +372,10 @@ class GameplayView(View):
 
     def _draw_player(self):
         """Draw the player"""
-        player_x = self.offset_x + self.player.x
-        player_y = self.offset_y + self.player.y
+        player_x = self.offset_x + self.player.x - CELL_SIZE // 2
+        player_y = self.offset_y + self.player.y - CELL_SIZE // 2
         counter = self.animation_counter // 4
-        print(f"Player images available: {len(player_images)}")
+        # print(f"Player images available: {len(player_images)}")
         if self.player.direction == "E":
             screen.blit(player_images[counter], (player_x, player_y))
         elif self.direction == "W":
