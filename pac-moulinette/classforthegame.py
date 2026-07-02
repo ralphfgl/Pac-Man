@@ -259,16 +259,17 @@ class Moulinette(Perssonage):
 
     def open_gate(self, pos: List, way: str, maze) -> bool:
         if way == "N":
-            if maze.themaze[pos[1]][pos[0]].walls & 0b1 and self.pos[1] <= pos[1] * 80:
+            if maze.themaze[pos[1]][pos[0]].walls & 0b1 and self.pos[1] % 80 <= 40:
+                print(f"{self.pos}test")
                 return True
         elif way == "W":
-            if (maze.themaze[pos[1]][pos[0]].walls >> 3) & 0b1 and self.pos[0] <= pos[0] * 80:
+            if (maze.themaze[pos[1]][pos[0]].walls >> 3) & 0b1 and self.pos[0] % 80 <= 40:
                 return True
         elif way == "E":
-            if (maze.themaze[pos[1]][pos[0]].walls >> 1) & 0b1 and self.pos[0] >= pos[0] * 80:
+            if (maze.themaze[pos[1]][pos[0]].walls >> 1) & 0b1 and self.pos[0] % 80 >= 40:
                 return True
         elif way == "S":
-            if (maze.themaze[pos[1]][pos[0]].walls >> 2) & 0b1 and self.pos[1] >= pos[1] * 80:
+            if (maze.themaze[pos[1]][pos[0]].walls >> 2) & 0b1 and self.pos[1] % 80 >= 40:
                 return True
         return False
 
