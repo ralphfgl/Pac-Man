@@ -5,7 +5,7 @@ ELIOT_PATH = "asset/Eliot.png"
 
 WALL_0 = "asset/0000.png"
 WALL_1 = "asset/mur_haut.png"
-WALL_10 = "asset/mur_droit.png"
+WALL_10 = "asset/mdroit.png"
 WALL_11 = "asset/coinhdoit.png"
 WALL_100 = "asset/mur_bas.png"
 WALL_101 = "asset/couloir_dr.png"

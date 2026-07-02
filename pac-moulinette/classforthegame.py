@@ -3,6 +3,8 @@ from abc import abstractmethod
 import random
 from maze_wrapper import MazeLoader, LvlConfig
 
+moul_size = 60
+
 
 class Perssonage():
     def __init__(
@@ -107,20 +109,20 @@ class Stud(Perssonage):
             self.pace -= 1
 
     def open_gate(self, pos: List, way: str) -> bool:
-        level = LvlConfig(width=16, height=12, seed=42)
+        level = LvlConfig(width=16, height=12, seed=39)
         maze_loader = MazeLoader(level)
         maze = maze_loader.load()
         if way == "N":
-            if maze.themaze[pos[0]][pos[1]].walls & 0b1:
+            if maze.themaze[pos[1]][pos[0]].walls & 0b1:
                 return True
         elif way == "W":
-            if (maze.themaze[pos[0]][pos[1]].walls >> 3) & 0b1:
+            if (maze.themaze[pos[1]][pos[0]].walls >> 3) & 0b1:
                 return True
         elif way == "E":
-            if (maze.themaze[pos[0]][pos[1]].walls >> 1) & 0b1:
+            if (maze.themaze[pos[1]][pos[0]].walls >> 1) & 0b1:
                 return True
         elif way == "S":
-            if (maze.themaze[pos[0]][pos[1]].walls >> 2) & 0b1:
+            if (maze.themaze[pos[1]][pos[0]].walls >> 2) & 0b1:
                 return True
         return False
 
@@ -129,6 +131,7 @@ class Stud(Perssonage):
         pos = []
         pos.append(self.pos[0] // 80)
         pos.append(self.pos[1] // 80)
+        print(pos)
         if self.pos[0] <= 0 or self.open_gate(pos, "W"):
             direction.remove("W")
         if self.pos[0] + 80 >= 1280 or self.open_gate(pos, "E"):
@@ -153,6 +156,8 @@ class Stud(Perssonage):
         direction = random.choice(direction)
         self.dir = direction
         print(self.dir)
+        pos.pop()
+        pos.pop()
         return self.chose_dir(direction)
 
 
@@ -252,48 +257,38 @@ class Moulinette(Perssonage):
     def spe(self):
         pass
 
-    def colision(self, wall: tuple) -> bool:
-        if self.pos[0] + 80 <= wall[0] + 34 and self.pos[0] + 80 >= wall[0]:
-            if self.pos[1] + 80 <= wall[1] + 34 and self.pos[1] + 80 >= wall[1]:
-                return True
-        return False
-
-    def open_gate(self, pos: List, way: str) -> bool:
-        level = LvlConfig(width=16, height=12, seed=42)
-        maze_loader = MazeLoader(level)
-        maze = maze_loader.load()
+    def open_gate(self, pos: List, way: str, maze) -> bool:
         if way == "N":
-            if maze.themaze[pos[0]][pos[1]].walls & 0b1:
+            if maze.themaze[pos[1]][pos[0]].walls & 0b1 and self.pos[1] <= pos[1] * 80:
                 return True
         elif way == "W":
-            if (maze.themaze[pos[0]][pos[1]].walls >> 3) & 0b1:
+            if (maze.themaze[pos[1]][pos[0]].walls >> 3) & 0b1 and self.pos[0] <= pos[0] * 80:
                 return True
         elif way == "E":
-            if (maze.themaze[pos[0]][pos[1]].walls >> 1) & 0b1:
+            if (maze.themaze[pos[1]][pos[0]].walls >> 1) & 0b1 and self.pos[0] >= pos[0] * 80:
                 return True
         elif way == "S":
-            if (maze.themaze[pos[0]][pos[1]].walls >> 2) & 0b1:
+            if (maze.themaze[pos[1]][pos[0]].walls >> 2) & 0b1 and self.pos[1] >= pos[1] * 80:
                 return True
         return False
 
-
-    def mouve(self, right: bool, left: bool, down: bool, up: bool, wall: tuple) -> List:
+    def mouve(self, right: bool, left: bool, down: bool, up: bool, maze) -> List:
         pos = []
         pos.append(self.pos[0] // 80)
         pos.append(self.pos[1] // 80)
-        if self.pos[0] <= 0 or self.open_gate(pos, "W"):
+        if self.pos[0] <= 0 or self.open_gate(pos, "W", maze):
             left = False
-        if self.pos[0] + 80 >= 1280 or self.open_gate(pos, "E"):
+        if self.pos[0] + moul_size >= 1280 or self.open_gate(pos, "E", maze):
             right = False
-        if self.pos[1] <= 0 or self.open_gate(pos, "N"):
+        if self.pos[1] <= 0 or self.open_gate(pos, "N", maze):
             up = False
-        if self.pos[1] + 80 >= 960 or self.open_gate(pos, "S"):
+        if self.pos[1] + moul_size >= 960 or self.open_gate(pos, "S", maze):
             down = False
-        if right is True and self.pos[0] + 80 <= 1280:
+        if right is True and self.pos[0] + moul_size <= 1280:
             self.pos[0] += self.vitesse
         if left is True and self.pos[0] > 0:
             self.pos[0] -= self.vitesse
-        if down is True and self.pos[1] + 80 <= 960:
+        if down is True and self.pos[1] + moul_size <= 960:
             self.pos[1] += self.vitesse
         if up is True and self.pos[1] > 0:
             self.pos[1] -= self.vitesse

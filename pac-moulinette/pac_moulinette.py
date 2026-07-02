@@ -7,15 +7,15 @@ from typing import Any
 
 pygame.init()
 
-level = LvlConfig(width=16, height=12, seed=42)
+level = LvlConfig(width=16, height=12, seed=39)
 maze_loader = MazeLoader(level)
 maze = maze_loader.load()
 
-
+moul_size = 60
 taille = (1280, 960)
 pygame.display.set_caption(asset.DRAGON_PATH)
 fenetre = pygame.display.set_mode(taille, pygame.RESIZABLE)
-image_moulinette = pygame.image.load(asset.KNIGHT_PATH).convert_alpha()
+image_moulinette = pygame.transform.scale(pygame.image.load(asset.KNIGHT_PATH).convert_alpha(), (moul_size, moul_size))
 image_stu = pygame.image.load(asset.DRAGON_PATH).convert_alpha()
 image_piscin = pygame.image.load(asset.ELIOT_PATH).convert_alpha()
 image_wall0 = pygame.image.load(asset.WALL_0).convert_alpha()
@@ -52,13 +52,13 @@ while game:
             if event.key == pygame.K_LEFT:
                 right = up = down = False
                 left = True
-            if event.key == pygame.K_DOWN:
-                left = right = up = False
-                down = True
             if event.key == pygame.K_UP:
                 left = right = down = False
                 up = True
-    pos_moulinette = moulinette.mouve(right, left, down, up, maze.themaze)
+            if event.key == pygame.K_DOWN:
+                left = right = up = False
+                down = True
+    pos_moulinette = moulinette.mouve(right, left, down, up, maze)
     pos_stu = stu.mouve()
     pos_piscin = piscin.mouve(pos_moulinette)
     for y in range(len(maze.themaze)):
@@ -110,7 +110,7 @@ while game:
             elif w == 1101:
                 fenetre.blit(image_wall1101, (x * 80, y * 80))
             w = 0
-    fenetre.blit(image_moulinette, pos_moulinette)
-    fenetre.blit(image_stu, pos_stu)
-    fenetre.blit(image_piscin, pos_piscin)
+    fenetre.blit(image_moulinette, (pos_moulinette[0] + 10 , pos_moulinette[1] + 10))
+    #fenetre.blit(image_stu, pos_stu)
+    #fenetre.blit(image_piscin, pos_piscin)
     pygame.display.flip()
