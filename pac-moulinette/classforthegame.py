@@ -1,7 +1,11 @@
 from typing import Any, List
 from abc import abstractmethod
 import random
+from maze_wrapper import MazeLoader, LvlConfig
 
+level = LvlConfig(width=16, height=12, seed=42)
+maze_loader = MazeLoader(level)
+maze = maze_loader.load()
 
 class Perssonage():
     def __init__(
@@ -89,7 +93,6 @@ class Stud(Perssonage):
             self.pos[1] += self.vitesse
         if direction == "N":
             self.pos[1] -= self.vitesse
-        print(self.pos)
         return self.pos
 
     def spe(self) -> Any:
@@ -123,13 +126,14 @@ class Stud(Perssonage):
 
     def mouve(self) -> List:
         direction = ["W", "E", "N", "S"]
+        pos = 
         if self.pos[0] <= 0:
             direction.remove("W")
-        if self.pos[0] + 80 >= 480:
+        if self.pos[0] + 80 >= 1280:
             direction.remove("E")
         if self.pos[1] <= 0:
             direction.remove("N")
-        if self.pos[1] + 80 >= 480:
+        if self.pos[1] + 80 >= 960:
             direction.remove("S")
         if self.dir not in direction:
             direction = random.choice(direction)
@@ -139,9 +143,9 @@ class Stud(Perssonage):
         elif self.dir == "E":
             direction.remove("W")
         elif self.dir == "S":
-            direction.remove("")
-        elif self.dir == "W":
-            direction.remove("E")
+            direction.remove("N")
+        elif self.dir == "N":
+            direction.remove("S")
         direction = random.choice(direction)
         return self.chose_dir(direction)
 
@@ -208,11 +212,11 @@ class Piscineux(Perssonage):
         direction = self.faster(direction, m_pos)
         if self.pos[0] <= 0:
             direction.remove("W")
-        if self.pos[0] >= 480:
+        if self.pos[0] >= 1280:
             direction.remove("E")
         if self.pos[1] <= 0:
             direction.remove("N")
-        if self.pos[1] >= 480:
+        if self.pos[1] >= 960:
             direction.remove("S")
         return self.chose_dir(direction)
 
@@ -249,11 +253,11 @@ class Moulinette(Perssonage):
         return False
 
     def mouve(self, right: bool, left: bool, down: bool, up: bool, wall: tuple) -> List:
-        if right is True and self.pos[0] + 80 <= 480 and self.colision(wall) is False:
+        if right is True and self.pos[0] + 80 <= 1280:
             self.pos[0] += self.vitesse
         if left is True and self.pos[0] > 0:
             self.pos[0] -= self.vitesse
-        if down is True and self.pos[1] + 80 <= 480:
+        if down is True and self.pos[1] + 80 <= 960:
             self.pos[1] += self.vitesse
         if up is True and self.pos[1] > 0:
             self.pos[1] -= self.vitesse
