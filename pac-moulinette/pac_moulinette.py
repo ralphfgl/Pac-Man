@@ -11,13 +11,13 @@ level = LvlConfig(width=16, height=12, seed=39)
 maze_loader = MazeLoader(level)
 maze = maze_loader.load()
 
-moul_size = 60
+moul_size = 40
 taille = (1280, 960)
 clok = pygame.time.Clock()
 pygame.display.set_caption(asset.DRAGON_PATH)
 fenetre = pygame.display.set_mode(taille, pygame.RESIZABLE)
 image_moulinette = pygame.transform.scale(pygame.image.load(asset.KNIGHT_PATH).convert_alpha(), (moul_size, moul_size))
-image_stu = pygame.image.load(asset.DRAGON_PATH).convert_alpha()
+image_stu = pygame.transform.scale(pygame.image.load(asset.DRAGON_PATH).convert_alpha(), (moul_size, moul_size))
 image_piscin = pygame.image.load(asset.ELIOT_PATH).convert_alpha()
 image_wall0 = pygame.image.load(asset.WALL_0).convert_alpha()
 image_wall1 = pygame.image.load(asset.WALL_1).convert_alpha()
@@ -61,7 +61,7 @@ while game:
                 down = True
     pos_moulinette = moulinette.mouve(right, left, down, up, maze)
     pos_stu = stu.mouve(maze)
-    pos_piscin = piscin.mouve(pos_moulinette)
+    pos_piscin = piscin.mouve(pos_moulinette, maze)
     for y in range(len(maze.themaze)):
         row = maze.themaze[y]
         w = 0
@@ -112,7 +112,7 @@ while game:
                 fenetre.blit(image_wall1101, (x * 80, y * 80))
             w = 0
     fenetre.blit(image_moulinette, (pos_moulinette[0] + 40 - moul_size / 2, pos_moulinette[1] + 40 - moul_size / 2))
-    #fenetre.blit(image_stu, pos_stu)
+    fenetre.blit(image_stu, pos_stu)
     #fenetre.blit(image_piscin, pos_piscin)
     pygame.display.flip()
-    clok.tick(50)
+    clok.tick(10)
