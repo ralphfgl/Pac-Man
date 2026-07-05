@@ -1,9 +1,9 @@
 from typing import Any, List
 from abc import abstractmethod
 import random
-from maze_wrapper import MazeLoader, LvlConfig
 
 moul_size = 60
+
 
 class Perssonage():
     def __init__(
@@ -69,7 +69,7 @@ class Stud(Perssonage):
             pace: int = 4,
             ):
         if pos is None:
-            pos = [0, 1]
+            pos = [80 * 11, 0]
         super().__init__(
             pos,
             name,
@@ -81,6 +81,7 @@ class Stud(Perssonage):
         self.life = life
         self.pace = pace
         self.dir = dir
+        self.pos = pos
 
     def chose_dir(self, direction: List) -> List:
         if direction == "W":
@@ -138,7 +139,6 @@ class Stud(Perssonage):
             self.vitesse = self.vitesse * 2
             self.pace -= 1
 
-
     def mouve(self, maze) -> List:
         direction = ["W", "E", "N", "S"]
         pos = []
@@ -153,10 +153,8 @@ class Stud(Perssonage):
         if self.open_gate(pos, "S", maze):
             direction.remove("S")
         if self.dir not in direction:
-            print(direction)
             direction = random.choice(direction)
             self.dir = direction
-            print(direction)
             return self.chose_dir(direction)
         if self.dir == "W" and "E" in direction:
             direction.remove("E")
@@ -181,13 +179,13 @@ class Piscineux(Perssonage):
             access: int = 1,
             pv: int = 100,
             atk: int = 50,
-            vitesse: int = 0.5,
+            vitesse: int = 1,
             dir: str = "Rien",
             one_dir: str = "rien",
             life: int = 1,
             ):
         if pos is None:
-            pos = [0, 0]
+            pos = [80 * 8, 160]
         super().__init__(
             pos,
             name,
@@ -199,6 +197,7 @@ class Piscineux(Perssonage):
         self.life = life
         self.dir = dir
         self.one_dir = one_dir
+        self.pos = pos
 
     def chose_dir(self, direction: List) -> List:
         if direction[0] == "W":
@@ -214,22 +213,25 @@ class Piscineux(Perssonage):
     def spe(self) -> Any:
         pass
 
-    def faster(self, direction, m_pos) -> List[str]:
+    def faster(self, direction: List, m_pos) -> List[str]:
         long = self.pos[0] - m_pos[0]
         height = self.pos[1] - m_pos[1]
-        if long > 0:
-            direction[0] = "W"
-            direction[1] = "E"
-        if height < 0:
-            direction[2] = "S"
-            direction[3] = "N"
-        if long == 0:
-            temp = direction[0]
-            temp2 = direction[1]
-            direction[0] = direction[2]
-            direction[1] = direction[3]
-            direction[2] = temp
-            direction[3] = temp2
+        if long != 0:
+            if long > 0:
+                direction.remove("E")
+            if long < 0:
+                direction.remove("W")
+        else:
+            direction.remove("W")
+            direction.remove("E")
+        if height != 0:
+            if height < 0:
+                direction.remove("N")
+            if height > 0:
+                direction.remove("S")
+        else:
+            direction.remove("N")
+            direction.remove("S")
         return direction
 
     def open_gate(self, pos: List, way: str, maze) -> bool:
@@ -269,15 +271,17 @@ class Piscineux(Perssonage):
         pos = []
         pos.append(self.pos[0] // 80)
         pos.append(self.pos[1] // 80)
-        if self.pos[0] <= 0 or self.open_gate(pos, "W", maze):
+        if "W" in direction and self.open_gate(pos, "W", maze):
             direction.remove("W")
-        if self.pos[0] + 80 >= 1280 or self.open_gate(pos, "E", maze):
+        if "E" in direction and self.open_gate(pos, "E", maze):
             direction.remove("E")
-        if self.pos[1] <= 0 or self.open_gate(pos, "N", maze):
+        if "N" in direction and self.open_gate(pos, "N", maze):
             direction.remove("N")
-        if self.pos[1] + 80 >= 960 or self.open_gate(pos, "S", maze):
+        if "S" in direction and self.open_gate(pos, "S", maze):
             direction.remove("S")
-        return self.pos
+        if not direction:
+            return self.pos
+        return self.chose_dir(direction[0])
 
 
 class Moulinette(Perssonage):
@@ -336,11 +340,19 @@ class Moulinette(Perssonage):
                 return True
             if (not (maze.themaze[pos[1]][pos[0]].walls >> 2) & 0b1) and (self.pos[0] // 80) != ((self.pos[0] + moul_size) // 80):
                 return True
-            if (not (maze.themaze[pos[1]][pos[0]].walls >> 2) & 0b1) and (self.pos[0] % 80) <= 0 or ((self.pos[0] + moul_size) % 80) >= 62:
+            if (not (maze.themaze[pos[1]][pos[0]].walls >> 2) & 0b1) and (
+                 self.pos[0] % 80) <= 0 or ((
+                     self.pos[0] + moul_size) % 80) >= 62:
                 return True
         return False
 
-    def mouve(self, right: bool, left: bool, down: bool, up: bool, maze) -> List:
+    def mouve(
+            self,
+            right: bool,
+            left: bool,
+            down: bool,
+            up: bool,
+            maze) -> List:
         pos = []
         pos.append(self.pos[0] // 80)
         pos.append(self.pos[1] // 80)

@@ -1,9 +1,7 @@
 import pygame
 import classforthegame
-from mazegenerator import MazeGenerator
 from maze_wrapper import MazeLoader, LvlConfig
 import asset
-from typing import Any
 
 pygame.init()
 
@@ -16,8 +14,12 @@ taille = (1280, 960)
 clok = pygame.time.Clock()
 pygame.display.set_caption(asset.DRAGON_PATH)
 fenetre = pygame.display.set_mode(taille, pygame.RESIZABLE)
-image_moulinette = pygame.transform.scale(pygame.image.load(asset.KNIGHT_PATH).convert_alpha(), (moul_size, moul_size))
-image_stu = pygame.transform.scale(pygame.image.load(asset.DRAGON_PATH).convert_alpha(), (moul_size, moul_size))
+image_moulinette = pygame.transform.scale(pygame.image.load(asset.KNIGHT_PATH).
+                                          convert_alpha(), (
+                                              moul_size,
+                                              moul_size))
+image_stu = pygame.transform.scale(pygame.image.load(asset.DRAGON_PATH).
+                                   convert_alpha(), (moul_size, moul_size))
 image_piscin = pygame.image.load(asset.ELIOT_PATH).convert_alpha()
 image_wall0 = pygame.image.load(asset.WALL_0).convert_alpha()
 image_wall1 = pygame.image.load(asset.WALL_1).convert_alpha()
@@ -42,6 +44,8 @@ stu = classforthegame.Stud()
 piscin = classforthegame.Piscineux()
 pos_moulinette = moulinette.pos
 pos_stu = stu.pos
+pos_piscin = piscin.pos
+i = 0
 while game:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -59,9 +63,17 @@ while game:
             if event.key == pygame.K_DOWN:
                 left = right = up = False
                 down = True
-    pos_moulinette = moulinette.mouve(right, left, down, up, maze)
+    if pos_moulinette == pos_stu:
+        game = False
+    if pos_moulinette == pos_piscin:
+        game = False
+    if i == 3:
+        pos_piscin = piscin.mouve(pos_moulinette, maze)
+        i = 0
+    else:
+        i += 1
     pos_stu = stu.mouve(maze)
-    pos_piscin = piscin.mouve(pos_moulinette, maze)
+    pos_moulinette = moulinette.mouve(right, left, down, up, maze)
     for y in range(len(maze.themaze)):
         row = maze.themaze[y]
         w = 0
@@ -111,8 +123,14 @@ while game:
             elif w == 1101:
                 fenetre.blit(image_wall1101, (x * 80, y * 80))
             w = 0
-    fenetre.blit(image_moulinette, (pos_moulinette[0] + 40 - moul_size / 2, pos_moulinette[1] + 40 - moul_size / 2))
-    fenetre.blit(image_stu, pos_stu)
-    #fenetre.blit(image_piscin, pos_piscin)
+    fenetre.blit(image_moulinette, (
+        pos_moulinette[0] + 40 - moul_size / 2,
+        pos_moulinette[1] + 40 - moul_size / 2))
+    fenetre.blit(image_stu, (
+        pos_stu[0] + 40 - moul_size / 2,
+        pos_stu[1] + 40 - moul_size / 2))
+    fenetre.blit(image_piscin, (
+        pos_piscin[0] + 40 - moul_size / 2,
+        pos_piscin[1] + 40 - moul_size / 2))
     pygame.display.flip()
-    clok.tick(10)
+    clok.tick(500)
