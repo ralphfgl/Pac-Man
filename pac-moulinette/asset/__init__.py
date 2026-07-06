@@ -19,3 +19,5 @@ WALL_1011 = "asset/pmbas.png"
 WALL_1110 = "asset/pmhaut.png"
 WALL_1111 = "asset/1111.png"
 WALL_1101 = "asset/pmdroit.png"
+
+PAC_GUM = "asset/pac_gum.jpg"

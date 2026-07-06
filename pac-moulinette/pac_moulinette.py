@@ -18,9 +18,14 @@ image_moulinette = pygame.transform.scale(pygame.image.load(asset.KNIGHT_PATH).
                                           convert_alpha(), (
                                               moul_size,
                                               moul_size))
-image_stu = pygame.transform.scale(pygame.image.load(asset.DRAGON_PATH).
-                                   convert_alpha(), (moul_size, moul_size))
-image_piscin = pygame.image.load(asset.ELIOT_PATH).convert_alpha()
+image_stu_norm = pygame.transform.scale(pygame.image.load(asset.DRAGON_PATH).
+                                        convert_alpha(), (
+                                            moul_size, moul_size))
+image_stu_Fuit = pygame.transform.scale(pygame.image.load(asset.DRAGON_PATH).
+                                        convert_alpha(), (
+                                            moul_size, moul_size))
+image_piscin_norm = pygame.image.load(asset.ELIOT_PATH).convert_alpha()
+image_piscin_Fuit = pygame.image.load(asset.ELIOT_PATH).convert_alpha()
 image_wall0 = pygame.image.load(asset.WALL_0).convert_alpha()
 image_wall1 = pygame.image.load(asset.WALL_1).convert_alpha()
 image_wall10 = pygame.image.load(asset.WALL_10).convert_alpha()
@@ -37,6 +42,7 @@ image_wall1011 = pygame.image.load(asset.WALL_1011).convert_alpha()
 image_wall1110 = pygame.image.load(asset.WALL_1110).convert_alpha()
 image_wall1111 = pygame.image.load(asset.WALL_1111).convert_alpha()
 image_wall1101 = pygame.image.load(asset.WALL_1101).convert_alpha()
+image_s_pac_gum = pygame.image.load(asset.PAC_GUM).convert_alpha()
 game = True
 right = up = down = left = False
 moulinette = classforthegame.Moulinette()
@@ -63,17 +69,10 @@ while game:
             if event.key == pygame.K_DOWN:
                 left = right = up = False
                 down = True
-    if pos_moulinette == pos_stu:
+    if pos_moulinette == pos_stu and piscin.fuit is False:
         game = False
-    if pos_moulinette == pos_piscin:
+    if pos_moulinette == pos_piscin and piscin.fuit is False:
         game = False
-    if i == 3:
-        pos_piscin = piscin.mouve(pos_moulinette, maze)
-        i = 0
-    else:
-        i += 1
-    pos_stu = stu.mouve(maze)
-    pos_moulinette = moulinette.mouve(right, left, down, up, maze)
     for y in range(len(maze.themaze)):
         row = maze.themaze[y]
         w = 0
@@ -123,6 +122,29 @@ while game:
             elif w == 1101:
                 fenetre.blit(image_wall1101, (x * 80, y * 80))
             w = 0
+    fenetre.blit(image_s_pac_gum, (30, 30))
+    #if pos_moulinette[0] // 80 == 0:
+    #    if pos_moulinette[1] // 80 == 0:
+    #        piscin.fuit = True
+    if piscin.fuit is True:
+        image_piscin = image_piscin_norm
+        image_stu = image_stu_Fuit
+        if i == 4:
+            pos_piscin = piscin.mouve(pos_moulinette, maze)
+            pos_stu = stu.mouve(maze, pos_moulinette)
+            i = 0
+        else:
+            i += 1
+    else:
+        image_piscin = image_piscin_norm
+        image_stu = image_stu_norm
+        if i == 1:
+            pos_piscin = piscin.mouve(pos_moulinette, maze)
+            pos_stu = stu.mouve(maze, pos_moulinette)
+            i = 0
+        else:
+            i += 1
+    pos_moulinette = moulinette.mouve(right, left, down, up, maze)
     fenetre.blit(image_moulinette, (
         pos_moulinette[0] + 40 - moul_size / 2,
         pos_moulinette[1] + 40 - moul_size / 2))
