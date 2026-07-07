@@ -25,7 +25,7 @@ class Perssonage:
 class Stud(Perssonage):
     def __init__(
         self,
-        pos: List = None,
+        pos: List = [80 * 11, 1],
         name: str = "Corentin",
         access: int = 1,
         pv: int = 100,
@@ -35,8 +35,6 @@ class Stud(Perssonage):
         life: int = 1,
         stat: int = 1,
     ):
-        if pos is None:
-            pos = [80 * 11, 1]
         super().__init__(pos, name, access, pv, atk, vitesse)
         self.life = life
         self.stat = stat
@@ -165,7 +163,7 @@ class Stud(Perssonage):
 class Piscineux(Perssonage):
     def __init__(
         self,
-        pos: List = None,
+        pos: List = [80 * 8, 160],
         name: str = "Jean",
         access: int = 1,
         pv: int = 100,
@@ -176,8 +174,6 @@ class Piscineux(Perssonage):
         life: int = 1,
         fuit: bool = False,
     ):
-        if pos is None:
-            pos = [80 * 8, 160]
         super().__init__(pos, name, access, pv, atk, vitesse)
         self.life = life
         self.dir = dir
@@ -330,7 +326,7 @@ class Piscineux(Perssonage):
 class Moulinette(Perssonage):
     def __init__(
         self,
-        pos: List = None,
+        pos: List = [1, 1],
         name: str = "Moulinette",
         access: int = 1,
         pv: int = 100,
@@ -339,8 +335,6 @@ class Moulinette(Perssonage):
         next_dir: str = "rien",
         one_dir: str = "rien",
     ):
-        if pos is None:
-            pos = [0, 1]
         super().__init__(pos, name, access, pv, atk, vitesse)
         self.next_dir = next_dir
         self.one_dir = one_dir
