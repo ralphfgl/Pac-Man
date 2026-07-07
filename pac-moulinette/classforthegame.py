@@ -305,6 +305,7 @@ class Piscineux(Perssonage):
             if self.open_gate(pos, "S", maze):
                 direction.remove("S")
             if self.dir not in direction:
+                print(direction)
                 direction = random.choice(direction)
                 self.dir = direction
                 return self.chose_dir(direction)

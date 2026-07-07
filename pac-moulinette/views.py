@@ -6,7 +6,7 @@
 #    By: rfeghali <rfeghali@learner.42.tech>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/07/07 22:09:03 by rfeghali          #+#    #+#              #
-#    Updated: 2026/07/07 23:15:25 by rfeghali         ###   ########.fr        #
+#    Updated: 2026/07/07 23:29:40 by rfeghali         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -309,12 +309,13 @@ class GameplayView(View):
         self.piscin = classforthegame.Piscineux()
 
     def handle_event(self, events):
-        print(self.piscin.pos)
         right = left = down = up = False
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
                     self.next_state = GameState.PAUSED
+                if event.key == pygame.K_ESCAPE:
+                    sys.exit()
                 elif event.key == pygame.K_c:
                     self.current_level = (self.current_level + 1) % len(
                         self.config.levels

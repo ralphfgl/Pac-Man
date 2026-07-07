@@ -5,7 +5,7 @@ import asset
 
 pygame.init()
 
-level = LvlConfig(width=16, height=12, seed=39)
+level = LvlConfig(width=16, height=16, seed=39)
 maze_loader = MazeLoader(level)
 maze = maze_loader.load()
 
@@ -59,6 +59,8 @@ while game:
         if event.type == pygame.QUIT:
             game = False
         if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                game = False
             if event.key == pygame.K_RIGHT:
                 left = up = down = False
                 right = True
