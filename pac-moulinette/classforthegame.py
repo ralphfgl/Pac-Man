@@ -4,7 +4,7 @@ import random
 moul_size = 60
 
 
-class Perssonage():
+class Perssonage:
     def __init__(
         self,
         pos: List[Any],
@@ -12,7 +12,7 @@ class Perssonage():
         access: int,
         pv: int,
         atk: int,
-        vitesse: int
+        vitesse: int,
     ) -> None:
         self.pos: List = pos
         self.name: str = name
@@ -24,27 +24,20 @@ class Perssonage():
 
 class Stud(Perssonage):
     def __init__(
-            self,
-            pos: List = None,
-            name: str = 'Corentin',
-            access: int = 1,
-            pv: int = 100,
-            atk: int = 50,
-            vitesse: int = 1,
-            dir: str = "Rien",
-            life: int = 1,
-            stat: int = 1,
-            ):
+        self,
+        pos: List = None,
+        name: str = "Corentin",
+        access: int = 1,
+        pv: int = 100,
+        atk: int = 50,
+        vitesse: int = 1,
+        dir: str = "Rien",
+        life: int = 1,
+        stat: int = 1,
+    ):
         if pos is None:
             pos = [80 * 11, 1]
-        super().__init__(
-            pos,
-            name,
-            access,
-            pv,
-            atk,
-            vitesse
-        )
+        super().__init__(pos, name, access, pv, atk, vitesse)
         self.life = life
         self.stat = stat
         self.dir = dir
@@ -63,47 +56,63 @@ class Stud(Perssonage):
     def open_gate(self, pos: List, way: str, maze) -> bool:
         if way == "N":
             if maze.themaze[pos[1]][pos[0]].walls & 0b1 and (
-                 self.pos[1] % 80 <= 1):
+                self.pos[1] % 80 <= 1
+            ):
                 return True
             if (not maze.themaze[pos[1]][pos[0]].walls & 0b1) and (
-                 self.pos[0] // 80) != ((self.pos[0] + moul_size) // 80):
+                self.pos[0] // 80
+            ) != ((self.pos[0] + moul_size) // 80):
                 return True
-            if (not maze.themaze[pos[1]][pos[0]].walls & 0b1) and (
-                 self.pos[0] % 80) <= 0 or ((
-                     self.pos[0] + moul_size) % 80) >= 62:
+            if (
+                (not maze.themaze[pos[1]][pos[0]].walls & 0b1)
+                and (self.pos[0] % 80) <= 0
+                or ((self.pos[0] + moul_size) % 80) >= 62
+            ):
                 return True
         elif way == "W":
             if (maze.themaze[pos[1]][pos[0]].walls >> 3) & 0b1 and (
-             self.pos[0] % 80 <= 1):
+                self.pos[0] % 80 <= 1
+            ):
                 return True
             if (not (maze.themaze[pos[1]][pos[0]].walls >> 3) & 0b1) and (
-                 self.pos[1] // 80) != ((self.pos[1] + moul_size) // 80):
+                self.pos[1] // 80
+            ) != ((self.pos[1] + moul_size) // 80):
                 return True
-            if (not (maze.themaze[pos[1]][pos[0]].walls >> 3) & 0b1) and (
-                 self.pos[1] % 80) <= 0 or ((
-                     self.pos[1] + moul_size) % 80) >= 62:
+            if (
+                (not (maze.themaze[pos[1]][pos[0]].walls >> 3) & 0b1)
+                and (self.pos[1] % 80) <= 0
+                or ((self.pos[1] + moul_size) % 80) >= 62
+            ):
                 return True
         elif way == "E":
             if (maze.themaze[pos[1]][pos[0]].walls >> 1) & 0b1 and (
-                 self.pos[0] + moul_size) % 80 >= 61:
+                self.pos[0] + moul_size
+            ) % 80 >= 61:
                 return True
             if (not (maze.themaze[pos[1]][pos[0]].walls >> 1) & 0b1) and (
-                 self.pos[1] // 80) != ((self.pos[1] + moul_size) // 80):
+                self.pos[1] // 80
+            ) != ((self.pos[1] + moul_size) // 80):
                 return True
-            if (not (maze.themaze[pos[1]][pos[0]].walls >> 1) & 0b1) and (
-                 self.pos[1] % 80) <= 0 or ((
-                     self.pos[1] + moul_size) % 80) >= 62:
+            if (
+                (not (maze.themaze[pos[1]][pos[0]].walls >> 1) & 0b1)
+                and (self.pos[1] % 80) <= 0
+                or ((self.pos[1] + moul_size) % 80) >= 62
+            ):
                 return True
         elif way == "S":
             if (maze.themaze[pos[1]][pos[0]].walls >> 2) & 0b1 and (
-                 self.pos[1] + moul_size) % 80 >= 61:
+                self.pos[1] + moul_size
+            ) % 80 >= 61:
                 return True
             if (not (maze.themaze[pos[1]][pos[0]].walls >> 2) & 0b1) and (
-                 self.pos[0] // 80) != ((self.pos[0] + moul_size) // 80):
+                self.pos[0] // 80
+            ) != ((self.pos[0] + moul_size) // 80):
                 return True
-            if (not (maze.themaze[pos[1]][pos[0]].walls >> 2) & 0b1) and (
-                 self.pos[0] % 80) <= 0 or ((
-                     self.pos[0] + moul_size) % 80) >= 62:
+            if (
+                (not (maze.themaze[pos[1]][pos[0]].walls >> 2) & 0b1)
+                and (self.pos[0] % 80) <= 0
+                or ((self.pos[0] + moul_size) % 80) >= 62
+            ):
                 return True
         return False
 
@@ -155,28 +164,21 @@ class Stud(Perssonage):
 
 class Piscineux(Perssonage):
     def __init__(
-            self,
-            pos: List = None,
-            name: str = 'Jean',
-            access: int = 1,
-            pv: int = 100,
-            atk: int = 50,
-            vitesse: int = 1,
-            dir: str = "Rien",
-            one_dir: str = "rien",
-            life: int = 1,
-            fuit: bool = False
-            ):
+        self,
+        pos: List = None,
+        name: str = "Jean",
+        access: int = 1,
+        pv: int = 100,
+        atk: int = 50,
+        vitesse: int = 1,
+        dir: str = "Rien",
+        one_dir: str = "rien",
+        life: int = 1,
+        fuit: bool = False,
+    ):
         if pos is None:
             pos = [80 * 8, 160]
-        super().__init__(
-            pos,
-            name,
-            access,
-            pv,
-            atk,
-            vitesse
-        )
+        super().__init__(pos, name, access, pv, atk, vitesse)
         self.life = life
         self.dir = dir
         self.one_dir = one_dir
@@ -220,48 +222,63 @@ class Piscineux(Perssonage):
     def open_gate(self, pos: List, way: str, maze) -> bool:
         if way == "N":
             if maze.themaze[pos[1]][pos[0]].walls & 0b1 and (
-                 self.pos[1] % 80 <= 1):
+                self.pos[1] % 80 <= 1
+            ):
                 return True
             if (not maze.themaze[pos[1]][pos[0]].walls & 0b1) and (
-                 self.pos[0] // 80) != ((self.pos[0] + moul_size) // 80):
+                self.pos[0] // 80
+            ) != ((self.pos[0] + moul_size) // 80):
                 return True
-            if (not maze.themaze[pos[1]][pos[0]].walls & 0b1) and (
-                 self.pos[0] % 80) <= 0 or ((
-                     self.pos[0] + moul_size) % 80) >= 62:
+            if (
+                (not maze.themaze[pos[1]][pos[0]].walls & 0b1)
+                and (self.pos[0] % 80) <= 0
+                or ((self.pos[0] + moul_size) % 80) >= 62
+            ):
                 return True
         elif way == "W":
             if (maze.themaze[pos[1]][pos[0]].walls >> 3) & 0b1 and (
-                 self.pos[0] % 80 <= 1):
+                self.pos[0] % 80 <= 1
+            ):
                 return True
             if (not (maze.themaze[pos[1]][pos[0]].walls >> 3) & 0b1) and (
-                 self.pos[1] // 80) != ((self.pos[1] + moul_size) // 80):
+                self.pos[1] // 80
+            ) != ((self.pos[1] + moul_size) // 80):
                 return True
-            if (not (maze.themaze[pos[1]][pos[0]].walls >> 3) & 0b1) and (
-                 self.pos[1] % 80) <= 0 or ((
-                     self.pos[1] + moul_size) % 80) >= 62:
+            if (
+                (not (maze.themaze[pos[1]][pos[0]].walls >> 3) & 0b1)
+                and (self.pos[1] % 80) <= 0
+                or ((self.pos[1] + moul_size) % 80) >= 62
+            ):
                 return True
         elif way == "E":
             if (maze.themaze[pos[1]][pos[0]].walls >> 1) & 0b1 and (
-                 self.pos[0] + moul_size) % 80 >= 61:
+                self.pos[0] + moul_size
+            ) % 80 >= 61:
                 return True
             if (not (maze.themaze[pos[1]][pos[0]].walls >> 1) & 0b1) and (
-                 self.pos[1] // 80) != ((self.pos[1] + moul_size) // 80):
+                self.pos[1] // 80
+            ) != ((self.pos[1] + moul_size) // 80):
                 return True
-            if (not (maze.themaze[pos[1]][pos[0]].walls >> 1) & 0b1) and (
-                 self.pos[1] % 80) <= 0 or ((
-                     self.pos[1] + moul_size) % 80) >= 62:
+            if (
+                (not (maze.themaze[pos[1]][pos[0]].walls >> 1) & 0b1)
+                and (self.pos[1] % 80) <= 0
+                or ((self.pos[1] + moul_size) % 80) >= 62
+            ):
                 return True
         elif way == "S":
             if (maze.themaze[pos[1]][pos[0]].walls >> 2) & 0b1 and (
-                 self.pos[1] + moul_size) % 80 >= 61:
+                self.pos[1] + moul_size
+            ) % 80 >= 61:
                 return True
             if (not (maze.themaze[pos[1]][pos[0]].walls >> 2) & 0b1) and (
-                 self.pos[0] // 80) != ((
-                     self.pos[0] + moul_size) // 80):
+                self.pos[0] // 80
+            ) != ((self.pos[0] + moul_size) // 80):
                 return True
-            if (not (maze.themaze[pos[1]][pos[0]].walls >> 2) & 0b1) and (
-                 self.pos[0] % 80) <= 0 or ((
-                     self.pos[0] + moul_size) % 80) >= 62:
+            if (
+                (not (maze.themaze[pos[1]][pos[0]].walls >> 2) & 0b1)
+                and (self.pos[0] % 80) <= 0
+                or ((self.pos[0] + moul_size) % 80) >= 62
+            ):
                 return True
         return False
 
@@ -312,26 +329,19 @@ class Piscineux(Perssonage):
 
 class Moulinette(Perssonage):
     def __init__(
-            self,
-            pos: List = None,
-            name: str = 'Moulinette',
-            access: int = 1,
-            pv: int = 100,
-            atk: int = 50,
-            vitesse: int = 1,
-            next_dir: str = "rien",
-            one_dir: str = "rien"
-            ):
+        self,
+        pos: List = None,
+        name: str = "Moulinette",
+        access: int = 1,
+        pv: int = 100,
+        atk: int = 50,
+        vitesse: int = 1,
+        next_dir: str = "rien",
+        one_dir: str = "rien",
+    ):
         if pos is None:
             pos = [0, 1]
-        super().__init__(
-            pos,
-            name,
-            access,
-            pv,
-            atk,
-            vitesse
-        )
+        super().__init__(pos, name, access, pv, atk, vitesse)
         self.next_dir = next_dir
         self.one_dir = one_dir
 
@@ -341,59 +351,69 @@ class Moulinette(Perssonage):
     def open_gate(self, pos: List, way: str, maze) -> bool:
         if way == "N":
             if maze.themaze[pos[1]][pos[0]].walls & 0b1 and (
-                 self.pos[1] % 80 <= 1):
+                self.pos[1] % 80 <= 1
+            ):
                 return True
             if (not maze.themaze[pos[1]][pos[0]].walls & 0b1) and (
-                 self.pos[0] // 80) != ((
-                     self.pos[0] + moul_size) // 80):
+                self.pos[0] // 80
+            ) != ((self.pos[0] + moul_size) // 80):
                 return True
-            if (not maze.themaze[pos[1]][pos[0]].walls & 0b1) and (
-                 self.pos[0] % 80) <= 0 or ((
-                     self.pos[0] + moul_size) % 80) >= 62:
+            if (
+                (not maze.themaze[pos[1]][pos[0]].walls & 0b1)
+                and (self.pos[0] % 80) <= 0
+                or ((self.pos[0] + moul_size) % 80) >= 62
+            ):
                 return True
         elif way == "W":
             if (maze.themaze[pos[1]][pos[0]].walls >> 3) & 0b1 and (
-                 self.pos[0] % 80 <= 1):
+                self.pos[0] % 80 <= 1
+            ):
                 return True
             if (not (maze.themaze[pos[1]][pos[0]].walls >> 3) & 0b1) and (
-                 self.pos[1] // 80) != ((self.pos[1] + moul_size) // 80):
+                self.pos[1] // 80
+            ) != ((self.pos[1] + moul_size) // 80):
                 return True
-            if (not (maze.themaze[pos[1]][pos[0]].walls >> 3) & 0b1) and (
-                 self.pos[1] % 80) <= 0 or ((
-                     self.pos[1] + moul_size) % 80) >= 62:
+            if (
+                (not (maze.themaze[pos[1]][pos[0]].walls >> 3) & 0b1)
+                and (self.pos[1] % 80) <= 0
+                or ((self.pos[1] + moul_size) % 80) >= 62
+            ):
                 return True
         elif way == "E":
             if (maze.themaze[pos[1]][pos[0]].walls >> 1) & 0b1 and (
-                 self.pos[0] + moul_size) % 80 >= 61:
+                self.pos[0] + moul_size
+            ) % 80 >= 61:
                 return True
             if (not (maze.themaze[pos[1]][pos[0]].walls >> 1) & 0b1) and (
-                 self.pos[1] // 80) != ((self.pos[1] + moul_size) // 80):
+                self.pos[1] // 80
+            ) != ((self.pos[1] + moul_size) // 80):
                 return True
-            if (not (maze.themaze[pos[1]][pos[0]].walls >> 1) & 0b1) and (
-                 self.pos[1] % 80) <= 0 or ((
-                     self.pos[1] + moul_size) % 80) >= 62:
+            if (
+                (not (maze.themaze[pos[1]][pos[0]].walls >> 1) & 0b1)
+                and (self.pos[1] % 80) <= 0
+                or ((self.pos[1] + moul_size) % 80) >= 62
+            ):
                 return True
         elif way == "S":
             if (maze.themaze[pos[1]][pos[0]].walls >> 2) & 0b1 and (
-                 self.pos[1] + moul_size) % 80 >= 61:
+                self.pos[1] + moul_size
+            ) % 80 >= 61:
                 return True
             if (not (maze.themaze[pos[1]][pos[0]].walls >> 2) & 0b1) and (
-                 self.pos[0] // 80) != ((
-                     self.pos[0] + moul_size) // 80):
+                self.pos[0] // 80
+            ) != ((self.pos[0] + moul_size) // 80):
                 return True
-            if (not (maze.themaze[pos[1]][pos[0]].walls >> 2) & 0b1) and (
-                 self.pos[0] % 80) <= 0 or ((
-                     self.pos[0] + moul_size) % 80) >= 62:
+            if (
+                (not (maze.themaze[pos[1]][pos[0]].walls >> 2) & 0b1)
+                and (self.pos[0] % 80) <= 0
+                or ((self.pos[0] + moul_size) % 80) >= 62
+            ):
                 return True
         return False
 
     def mouve(
-            self,
-            right: bool,
-            left: bool,
-            down: bool,
-            up: bool,
-            maze) -> List:
+        self, right: bool, left: bool, down: bool, up: bool, maze
+    ) -> List:
         pos = []
         pos.append(self.pos[0] // 80)
         pos.append(self.pos[1] // 80)

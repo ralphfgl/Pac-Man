@@ -14,16 +14,18 @@ taille = (1280, 960)
 clok = pygame.time.Clock()
 pygame.display.set_caption(asset.DRAGON_PATH)
 fenetre = pygame.display.set_mode(taille, pygame.RESIZABLE)
-image_moulinette = pygame.transform.scale(pygame.image.load(asset.KNIGHT_PATH).
-                                          convert_alpha(), (
-                                              moul_size,
-                                              moul_size))
-image_stu_norm = pygame.transform.scale(pygame.image.load(asset.DRAGON_PATH).
-                                        convert_alpha(), (
-                                            moul_size, moul_size))
-image_stu_Fuit = pygame.transform.scale(pygame.image.load(asset.DRAGON_PATH).
-                                        convert_alpha(), (
-                                            moul_size, moul_size))
+image_moulinette = pygame.transform.scale(
+    pygame.image.load(asset.KNIGHT_PATH).convert_alpha(),
+    (moul_size, moul_size),
+)
+image_stu_norm = pygame.transform.scale(
+    pygame.image.load(asset.DRAGON_PATH).convert_alpha(),
+    (moul_size, moul_size),
+)
+image_stu_Fuit = pygame.transform.scale(
+    pygame.image.load(asset.DRAGON_PATH).convert_alpha(),
+    (moul_size, moul_size),
+)
 image_piscin_norm = pygame.image.load(asset.ELIOT_PATH).convert_alpha()
 image_piscin_Fuit = pygame.image.load(asset.ELIOT_PATH).convert_alpha()
 image_wall0 = pygame.image.load(asset.WALL_0).convert_alpha()
@@ -123,7 +125,7 @@ while game:
                 fenetre.blit(image_wall1101, (x * 80, y * 80))
             w = 0
     fenetre.blit(image_s_pac_gum, (30, 30))
-    #if pos_moulinette[0] // 80 == 0:
+    # if pos_moulinette[0] // 80 == 0:
     #    if pos_moulinette[1] // 80 == 0:
     #        piscin.fuit = True
     if piscin.fuit is True:
@@ -145,14 +147,23 @@ while game:
         else:
             i += 1
     pos_moulinette = moulinette.mouve(right, left, down, up, maze)
-    fenetre.blit(image_moulinette, (
-        pos_moulinette[0] + 40 - moul_size / 2,
-        pos_moulinette[1] + 40 - moul_size / 2))
-    fenetre.blit(image_stu, (
-        pos_stu[0] + 40 - moul_size / 2,
-        pos_stu[1] + 40 - moul_size / 2))
-    fenetre.blit(image_piscin, (
-        pos_piscin[0] + 40 - moul_size / 2,
-        pos_piscin[1] + 40 - moul_size / 2))
+    fenetre.blit(
+        image_moulinette,
+        (
+            pos_moulinette[0] + 40 - moul_size / 2,
+            pos_moulinette[1] + 40 - moul_size / 2,
+        ),
+    )
+    fenetre.blit(
+        image_stu,
+        (pos_stu[0] + 40 - moul_size / 2, pos_stu[1] + 40 - moul_size / 2),
+    )
+    fenetre.blit(
+        image_piscin,
+        (
+            pos_piscin[0] + 40 - moul_size / 2,
+            pos_piscin[1] + 40 - moul_size / 2,
+        ),
+    )
     pygame.display.flip()
     clok.tick(500)
