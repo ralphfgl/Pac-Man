@@ -277,8 +277,6 @@ class GameplayView(View):
         self.current_level = 0
         self.score = 0
         self.lives = 0
-        self.offset_x = 0
-        self.offset_y = 0
         self.animation_counter = 0
 
     def reset(self):
@@ -299,8 +297,8 @@ class GameplayView(View):
                 self.maze.height * CELL_SIZE // 2,
             ]
         )
-        self.offset_x = (SCREEN_WIDTH - self.maze.width * CELL_SIZE) // 2
-        self.offset_y = (SCREEN_HEIGHT - self.maze.height * CELL_SIZE) // 2
+        # self.offset_x = (SCREEN_WIDTH - self.maze.width * CELL_SIZE) // 2
+        # self.offset_y = (SCREEN_HEIGHT - self.maze.height * CELL_SIZE) // 2
 
     def handle_event(self, events):
         for event in events:
