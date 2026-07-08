@@ -5,11 +5,11 @@ import asset
 
 pygame.init()
 
-level = LvlConfig(width=16, height=16, seed=39)
+level = LvlConfig(width=16, height=12, seed=21)
 maze_loader = MazeLoader(level)
 maze = maze_loader.load()
 
-moul_size = 40
+moul_size = 30
 taille = (1280, 960)
 clok = pygame.time.Clock()
 pygame.display.set_caption(asset.DRAGON_PATH)
@@ -148,6 +148,7 @@ while game:
             i = 0
         else:
             i += 1
+    print(moulinette.one_dir)
     pos_moulinette = moulinette.mouve(right, left, down, up, maze)
     fenetre.blit(
         image_moulinette,
@@ -168,4 +169,4 @@ while game:
         ),
     )
     pygame.display.flip()
-    clok.tick(500)
+    clok.tick(100)

@@ -138,9 +138,9 @@ if __name__ == "__main__":
 
     print("\nPoints")
     print(
-        f" Pacgum, super pacgum, ghost: {
-            config.points_per_pacgum
-            }, {config.points_per_super_pacgum}, {config.points_per_ghost}"
+        f" Pacgum, super pacgum, ghost: {config.points_per_pacgum}, {
+            config.points_per_super_pacgum
+        }, {config.points_per_ghost}"
     )
 
     print("\nLevels")

@@ -6,7 +6,7 @@
 #    By: rfeghali <rfeghali@learner.42.tech>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/07/07 22:09:03 by rfeghali          #+#    #+#              #
-#    Updated: 2026/07/07 23:29:40 by rfeghali         ###   ########.fr        #
+#    Updated: 2026/07/08 21:16:50 by rfeghali         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -333,7 +333,7 @@ class GameplayView(View):
                 elif event.key == pygame.K_DOWN:
                     left = right = up = False
                     down = True
-        fenetre.blit(image_s_pac_gum, (30, 30))
+        screen.blit(image_s_pac_gum, (30, 30))
         if self.moulinette.pos == self.stu.pos:
             self.lives -= 1
         if self.moulinette.pos == self.piscin.pos:
@@ -345,30 +345,25 @@ class GameplayView(View):
         image_stu = image_stu_norm
         self.piscin.pos = self.piscin.mouve(self.moulinette.pos, self.maze)
         self.stu.pos = self.stu.mouve(self.maze, self.moulinette.pos)
-        self.moulinette.pos = moulinette.mouve(
+        self.moulinette.pos = self.moulinette.mouve(
             right, left, down, up, self.maze
         )
-        fenetre.blit(
-            image_moulinette,
-            (
-                self.moulinette.pos[0] + 40 - moul_size / 2,
-                self.moulinette.pos[1] + 40 - moul_size / 2,
-            ),
-        )
-        fenetre.blit(
+        self._draw_player()
+        self.screen.blit(
             image_stu,
             (
                 self.stu.pos[0] + 40 - moul_size / 2,
                 self.stu.pos[1] + 40 - moul_size / 2,
             ),
         )
-        fenetre.blit(
+        self.screen.blit(
             image_piscin,
             (
                 self.piscin.pos[0] + 40 - moul_size / 2,
                 self.piscin.pos[1] + 40 - moul_size / 2,
             ),
         )
+        self.animation_counter = (self.animation_counter + 1) % 12
         if self.lives <= 0:
             self.next_state = GameState.GAME_OVER
 
@@ -376,8 +371,46 @@ class GameplayView(View):
         """Draw everything"""
         self.screen.fill(BLACK)
         self._draw_maze()
-        # self._draw_player()
+        self._draw_player()
         self._draw_hud()
+
+    def _draw_player(self):
+        """Draw the player"""
+        counter = self.animation_counter // 4
+        if self.moulinette.one_dir == "E" or self.moulinette.one_dir is None:
+            self.screen.blit(
+                moulinette_front_images[counter],
+                (
+                    self.moulinette.pos[0] + 40 - moul_size / 2,
+                    self.moulinette.pos[1] + 40 - moul_size / 2,
+                ),
+            )
+        elif self.moulinette.one_dir == "W":
+            self.screen.blit(
+                pygame.transform.flip(
+                    moulinette_front_images[counter], True, False
+                ),
+                (
+                    self.moulinette.pos[0] + 40 - moul_size / 2,
+                    self.moulinette.pos[1] + 40 - moul_size / 2,
+                ),
+            )
+        elif self.moulinette.one_dir == "N":
+            self.screen.blit(
+                pygame.transform.rotate(moulinette_front_images[counter], 90),
+                (
+                    self.moulinette.pos[0] + 40 - moul_size / 2,
+                    self.moulinette.pos[1] + 40 - moul_size / 2,
+                ),
+            )
+        elif self.moulinette.one_dir == "S":
+            self.screen.blit(
+                pygame.transform.rotate(moulinette_front_images[counter], 270),
+                (
+                    self.moulinette.pos[0] + 40 - moul_size / 2,
+                    self.moulinette.pos[1] + 40 - moul_size / 2,
+                ),
+            )
 
     def _draw_maze(self):
         """Draw the maze"""
@@ -398,37 +431,37 @@ class GameplayView(View):
                 if wall == 15:
                     w = 1111
                 if w == 0:
-                    fenetre.blit(image_wall0, (x * 80, y * 80))
+                    screen.blit(image_wall0, (x * 60, y * 60))
                 elif w == 1:
-                    fenetre.blit(image_wall1, (x * 80, y * 80))
+                    screen.blit(image_wall1, (x * 60, y * 60))
                 elif w == 10:
-                    fenetre.blit(image_wall10, (x * 80, y * 80))
+                    screen.blit(image_wall10, (x * 60, y * 60))
                 elif w == 11:
-                    fenetre.blit(image_wall11, (x * 80, y * 80))
+                    screen.blit(image_wall11, (x * 60, y * 60))
                 elif w == 100:
-                    fenetre.blit(image_wall100, (x * 80, y * 80))
+                    screen.blit(image_wall100, (x * 60, y * 60))
                 elif w == 101:
-                    fenetre.blit(image_wall101, (x * 80, y * 80))
+                    screen.blit(image_wall101, (x * 60, y * 60))
                 elif w == 110:
-                    fenetre.blit(image_wall110, (x * 80, y * 80))
+                    screen.blit(image_wall110, (x * 60, y * 60))
                 elif w == 111:
-                    fenetre.blit(image_wall111, (x * 80, y * 80))
+                    screen.blit(image_wall111, (x * 60, y * 60))
                 elif w == 1000:
-                    fenetre.blit(image_wall1000, (x * 80, y * 80))
+                    screen.blit(image_wall1000, (x * 60, y * 60))
                 elif w == 1100:
-                    fenetre.blit(image_wall1100, (x * 80, y * 80))
+                    screen.blit(image_wall1100, (x * 60, y * 60))
                 elif w == 1001:
-                    fenetre.blit(image_wall1001, (x * 80, y * 80))
+                    screen.blit(image_wall1001, (x * 60, y * 60))
                 elif w == 1011:
-                    fenetre.blit(image_wall1011, (x * 80, y * 80))
+                    screen.blit(image_wall1011, (x * 60, y * 60))
                 elif w == 1010:
-                    fenetre.blit(image_wall1010, (x * 80, y * 80))
+                    screen.blit(image_wall1010, (x * 60, y * 60))
                 elif w == 1110:
-                    fenetre.blit(image_wall1110, (x * 80, y * 80))
+                    screen.blit(image_wall1110, (x * 60, y * 60))
                 elif w == 1111:
-                    fenetre.blit(image_wall1111, (x * 80, y * 80))
+                    screen.blit(image_wall1111, (x * 60, y * 60))
                 elif w == 1101:
-                    fenetre.blit(image_wall1101, (x * 80, y * 80))
+                    screen.blit(image_wall1101, (x * 60, y * 60))
                 w = 0
 
     def _draw_hud(self):
@@ -451,14 +484,14 @@ if __name__ == "__main__":
     pygame.init()
 
     moul_size = 40
-    taille = (1280, 960)
+    taille = (SCREEN_WIDTH, SCREEN_HEIGHT)
     clok = pygame.time.Clock()
     pygame.display.set_caption(asset.DRAGON_PATH)
-    fenetre = pygame.display.set_mode(taille, pygame.RESIZABLE)
-    image_moulinette = pygame.transform.scale(
-        pygame.image.load(asset.KNIGHT_PATH).convert_alpha(),
-        (moul_size, moul_size),
-    )
+    screen = pygame.display.set_mode(taille, pygame.RESIZABLE)
+    # image_moulinette = pygame.transform.scale(
+    #     pygame.image.load(asset.KNIGHT_PATH).convert_alpha(),
+    #     (moul_size, moul_size),
+    # )
     image_stu_norm = pygame.transform.scale(
         pygame.image.load(asset.DRAGON_PATH).convert_alpha(),
         (moul_size, moul_size),
@@ -469,32 +502,64 @@ if __name__ == "__main__":
     )
     image_piscin_norm = pygame.image.load(asset.ELIOT_PATH).convert_alpha()
     image_piscin_Fuit = pygame.image.load(asset.ELIOT_PATH).convert_alpha()
-    image_wall0 = pygame.image.load(asset.WALL_0).convert_alpha()
-    image_wall1 = pygame.image.load(asset.WALL_1).convert_alpha()
-    image_wall10 = pygame.image.load(asset.WALL_10).convert_alpha()
-    image_wall11 = pygame.image.load(asset.WALL_11).convert_alpha()
-    image_wall100 = pygame.image.load(asset.WALL_100).convert_alpha()
-    image_wall101 = pygame.image.load(asset.WALL_101).convert_alpha()
-    image_wall110 = pygame.image.load(asset.WALL_110).convert_alpha()
-    image_wall111 = pygame.image.load(asset.WALL_111).convert_alpha()
-    image_wall1000 = pygame.image.load(asset.WALL_1000).convert_alpha()
-    image_wall1100 = pygame.image.load(asset.WALL_1100).convert_alpha()
-    image_wall1010 = pygame.image.load(asset.WALL_1010).convert_alpha()
-    image_wall1001 = pygame.image.load(asset.WALL_1001).convert_alpha()
-    image_wall1011 = pygame.image.load(asset.WALL_1011).convert_alpha()
-    image_wall1110 = pygame.image.load(asset.WALL_1110).convert_alpha()
-    image_wall1111 = pygame.image.load(asset.WALL_1111).convert_alpha()
-    image_wall1101 = pygame.image.load(asset.WALL_1101).convert_alpha()
+    image_wall0 = pygame.transform.scale(
+        pygame.image.load("asset/sprite_None.png").convert_alpha(), (60, 60)
+    )
+    image_wall1 = pygame.transform.scale(
+        pygame.image.load("asset/sprite_N.png").convert_alpha(), (60, 60)
+    )
+    image_wall10 = pygame.transform.scale(
+        pygame.image.load("asset/sprite_E.png").convert_alpha(), (60, 60)
+    )
+    image_wall11 = pygame.transform.scale(
+        pygame.image.load("asset/sprite_NE.png").convert_alpha(), (60, 60)
+    )
+    image_wall100 = pygame.transform.scale(
+        pygame.image.load("asset/sprite_S.png").convert_alpha(), (60, 60)
+    )
+    image_wall101 = pygame.transform.scale(
+        pygame.image.load("asset/sprite_NS.png").convert_alpha(), (60, 60)
+    )
+    image_wall110 = pygame.transform.scale(
+        pygame.image.load("asset/sprite_SE.png").convert_alpha(), (60, 60)
+    )
+    image_wall111 = pygame.transform.scale(
+        pygame.image.load("asset/sprite_NSE.png").convert_alpha(), (60, 60)
+    )
+    image_wall1000 = pygame.transform.scale(
+        pygame.image.load("asset/sprite_W.png").convert_alpha(), (60, 60)
+    )
+    image_wall1100 = pygame.transform.scale(
+        pygame.image.load("asset/sprite_SW.png").convert_alpha(), (60, 60)
+    )
+    image_wall1010 = pygame.transform.scale(
+        pygame.image.load("asset/sprite_EW.png").convert_alpha(), (60, 60)
+    )
+    image_wall1001 = pygame.transform.scale(
+        pygame.image.load("asset/sprite_NW.png").convert_alpha(), (60, 60)
+    )
+    image_wall1011 = pygame.transform.scale(
+        pygame.image.load("asset/sprite_NEW.png").convert_alpha(), (60, 60)
+    )
+    image_wall1110 = pygame.transform.scale(
+        pygame.image.load("asset/sprite_SEW.png").convert_alpha(), (60, 60)
+    )
+    image_wall1111 = pygame.transform.scale(
+        pygame.image.load("asset/sprite_NSEW.png").convert_alpha(), (60, 60)
+    )
+    image_wall1101 = pygame.transform.scale(
+        pygame.image.load("asset/sprite_NSW.png").convert_alpha(), (60, 60)
+    )
     image_s_pac_gum = pygame.image.load(asset.PAC_GUM).convert_alpha()
     game = True
-    moulinette = classforthegame.Moulinette()
+    # moulinette = classforthegame.Moulinette()
     views = {
-        GameState.MAIN_MENU: MainMenuView(fenetre, config),
-        GameState.PLAYING: GameplayView(fenetre, config),
-        GameState.PAUSED: PauseView(fenetre, config),
-        GameState.INSTRUCTIONS: InstructionsView(fenetre, config),
-        GameState.HIGH_SCORES: HighscoreView(fenetre, config),
-        GameState.GAME_OVER: GameOverView(fenetre, config),
+        GameState.MAIN_MENU: MainMenuView(screen, config),
+        GameState.PLAYING: GameplayView(screen, config),
+        GameState.PAUSED: PauseView(screen, config),
+        GameState.INSTRUCTIONS: InstructionsView(screen, config),
+        GameState.HIGH_SCORES: HighscoreView(screen, config),
+        GameState.GAME_OVER: GameOverView(screen, config),
     }
 
     current_state = GameState.MAIN_MENU
@@ -510,11 +575,17 @@ if __name__ == "__main__":
 
         next_state = current_view.get_next_state()
         if next_state:
+            previous_state = current_state
             current_state = next_state
             current_view = views[current_state]
-            current_view.reset()
+            if not (
+                current_state == GameState.PLAYING
+                and previous_state == GameState.PAUSED
+            ):
+                current_view.reset()
+            current_view.next_state = None
 
         pygame.display.flip()
-        clok.tick(60)
+        clok.tick(FPS)
     pygame.quit()
     sys.exit()

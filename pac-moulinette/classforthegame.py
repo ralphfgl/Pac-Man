@@ -25,12 +25,12 @@ class Perssonage:
 class Stud(Perssonage):
     def __init__(
         self,
-        pos: List = [80 * 11, 1],
+        pos: List = [80 * 11 + 1, 1],
         name: str = "Corentin",
         access: int = 1,
         pv: int = 100,
         atk: int = 50,
-        vitesse: int = 1,
+        vitesse: int = 3,
         dir: str = "Rien",
         life: int = 1,
         stat: int = 1,
@@ -163,7 +163,7 @@ class Stud(Perssonage):
 class Piscineux(Perssonage):
     def __init__(
         self,
-        pos: List = [80 * 8, 160],
+        pos: List = [80 * 8 + 1, 160 + 1],
         name: str = "Jean",
         access: int = 1,
         pv: int = 100,
@@ -172,7 +172,7 @@ class Piscineux(Perssonage):
         dir: str = "Rien",
         one_dir: str = "rien",
         life: int = 1,
-        fuit: bool = False,
+        fuit: bool = True,
     ):
         super().__init__(pos, name, access, pv, atk, vitesse)
         self.life = life
@@ -296,16 +296,15 @@ class Piscineux(Perssonage):
             if not direction:
                 return self.pos
         else:
-            if self.open_gate(pos, "W", maze):
+            if "W" in direction and self.open_gate(pos, "W", maze):
                 direction.remove("W")
-            if self.open_gate(pos, "E", maze):
+            if "E" in direction and self.open_gate(pos, "E", maze):
                 direction.remove("E")
-            if self.open_gate(pos, "N", maze):
+            if "N" in direction and self.open_gate(pos, "N", maze):
                 direction.remove("N")
-            if self.open_gate(pos, "S", maze):
+            if "S" in direction and self.open_gate(pos, "S", maze):
                 direction.remove("S")
             if self.dir not in direction:
-                print(direction)
                 direction = random.choice(direction)
                 self.dir = direction
                 return self.chose_dir(direction)
@@ -332,9 +331,9 @@ class Moulinette(Perssonage):
         access: int = 1,
         pv: int = 100,
         atk: int = 50,
-        vitesse: int = 1,
+        vitesse: int = 5,
         next_dir: str = "rien",
-        one_dir: str = "rien",
+        one_dir: str | Any = None,
     ):
         super().__init__(pos, name, access, pv, atk, vitesse)
         self.next_dir = next_dir
@@ -346,62 +345,62 @@ class Moulinette(Perssonage):
     def open_gate(self, pos: List, way: str, maze) -> bool:
         if way == "N":
             if maze.themaze[pos[1]][pos[0]].walls & 0b1 and (
-                self.pos[1] % 80 <= 1
+                self.pos[1] % 60 <= 1
             ):
                 return True
             if (not maze.themaze[pos[1]][pos[0]].walls & 0b1) and (
-                self.pos[0] // 80
-            ) != ((self.pos[0] + moul_size) // 80):
+                self.pos[0] // 60
+            ) != ((self.pos[0] + moul_size) // 60):
                 return True
             if (
                 (not maze.themaze[pos[1]][pos[0]].walls & 0b1)
-                and (self.pos[0] % 80) <= 0
-                or ((self.pos[0] + moul_size) % 80) >= 62
+                and (self.pos[0] % 60) <= 0
+                or ((self.pos[0] + moul_size) % 80) >= 52
             ):
                 return True
         elif way == "W":
             if (maze.themaze[pos[1]][pos[0]].walls >> 3) & 0b1 and (
-                self.pos[0] % 80 <= 1
+                self.pos[0] % 60 <= 1
             ):
                 return True
             if (not (maze.themaze[pos[1]][pos[0]].walls >> 3) & 0b1) and (
-                self.pos[1] // 80
-            ) != ((self.pos[1] + moul_size) // 80):
+                self.pos[1] // 60
+            ) != ((self.pos[1] + moul_size) // 60):
                 return True
             if (
                 (not (maze.themaze[pos[1]][pos[0]].walls >> 3) & 0b1)
-                and (self.pos[1] % 80) <= 0
-                or ((self.pos[1] + moul_size) % 80) >= 62
+                and (self.pos[1] % 60) <= 0
+                or ((self.pos[1] + moul_size) % 60) >= 52
             ):
                 return True
         elif way == "E":
             if (maze.themaze[pos[1]][pos[0]].walls >> 1) & 0b1 and (
                 self.pos[0] + moul_size
-            ) % 80 >= 61:
+            ) % 60 >= 61:
                 return True
             if (not (maze.themaze[pos[1]][pos[0]].walls >> 1) & 0b1) and (
-                self.pos[1] // 80
-            ) != ((self.pos[1] + moul_size) // 80):
+                self.pos[1] // 60
+            ) != ((self.pos[1] + moul_size) // 60):
                 return True
             if (
                 (not (maze.themaze[pos[1]][pos[0]].walls >> 1) & 0b1)
-                and (self.pos[1] % 80) <= 0
-                or ((self.pos[1] + moul_size) % 80) >= 62
+                and (self.pos[1] % 60) <= 0
+                or ((self.pos[1] + moul_size) % 60) >= 52
             ):
                 return True
         elif way == "S":
             if (maze.themaze[pos[1]][pos[0]].walls >> 2) & 0b1 and (
                 self.pos[1] + moul_size
-            ) % 80 >= 61:
+            ) % 60 >= 51:
                 return True
             if (not (maze.themaze[pos[1]][pos[0]].walls >> 2) & 0b1) and (
-                self.pos[0] // 80
-            ) != ((self.pos[0] + moul_size) // 80):
+                self.pos[0] // 60
+            ) != ((self.pos[0] + moul_size) // 60):
                 return True
             if (
                 (not (maze.themaze[pos[1]][pos[0]].walls >> 2) & 0b1)
-                and (self.pos[0] % 80) <= 0
-                or ((self.pos[0] + moul_size) % 80) >= 62
+                and (self.pos[0] % 60) <= 0
+                or ((self.pos[0] + moul_size) % 60) >= 52
             ):
                 return True
         return False
@@ -410,8 +409,8 @@ class Moulinette(Perssonage):
         self, right: bool, left: bool, down: bool, up: bool, maze
     ) -> List:
         pos = []
-        pos.append(self.pos[0] // 80)
-        pos.append(self.pos[1] // 80)
+        pos.append(self.pos[0] // 60)
+        pos.append(self.pos[1] // 60)
         if right is True:
             self.next_dir = "right"
         if left is True:
