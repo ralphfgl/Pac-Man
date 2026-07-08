@@ -115,10 +115,6 @@ class PauseView(View):
                     _, self.next_state = self.menu_items[self.selected_item]
 
     def draw(self):
-        overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
-        overlay.set_alpha(128)
-        overlay.fill(BLACK)
-        self.screen.blit(overlay, (0, 0))
 
         pause_text = self.font.render("PAUSED", True, YELLOW)
         pause_rect = pause_text.get_rect(center=(SCREEN_WIDTH // 2, 200))
@@ -396,6 +392,7 @@ class GameplayView(View):
 
     def _draw_hud(self):
         """Draw heads-up display"""
+
         level_text = self.font.render(
             f"Level: {self.current_level + 1}", True, WHITE
         )
@@ -443,9 +440,16 @@ if __name__ == "__main__":
         next_state = current_view.get_next_state()
         if next_state:
             print(f"Switching to: {next_state}")
+            previous_state = current_state
             current_state = next_state
             current_view = views[current_state]
-            current_view.reset()
+            if not (
+                previous_state == GameState.PAUSED
+                and current_state == GameState.PLAYING
+            ):
+                current_view.reset()
+            if current_state == GameState.PLAYING:
+                current_view.next_state = None
 
         current_view.draw()
         pygame.display.flip()
