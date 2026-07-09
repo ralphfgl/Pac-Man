@@ -474,22 +474,40 @@ if __name__ == "__main__":
     moul_size = 40
     taille = (SCREEN_WIDTH, SCREEN_HEIGHT)
     clok = pygame.time.Clock()
-    pygame.display.set_caption(asset.DRAGON_PATH)
+    pygame.display.set_caption("PAC-MAN")
     screen = pygame.display.set_mode(taille, pygame.RESIZABLE)
-    # image_moulinette = pygame.transform.scale(
-    #     pygame.image.load(asset.KNIGHT_PATH).convert_alpha(),
-    #     (moul_size, moul_size),
-    # )
+    ### LOADING THE ASSETS ###
+    moulinette_front_images = []
+    for i in range(0, 3):
+        moulinette_front_images.append(
+            pygame.transform.scale(
+                pygame.image.load(
+                    f"{BASE_DIR}/assets/sprite_cat_final{i}.png"
+                ),
+                (SPRITE_SIZE, SPRITE_SIZE),
+            )
+        )
+
+    moulinette_back_images = []
+    for i in range(3, 6):
+        moulinette_back_images.append(
+            pygame.transform.scale(
+                pygame.image.load(
+                    f"{BASE_DIR}/assets/sprite_cat_final{i}.png"
+                ),
+                (SPRITE_SIZE, SPRITE_SIZE),
+            )
+        )
     image_stu_norm = pygame.transform.scale(
-        pygame.image.load(asset.DRAGON_PATH).convert_alpha(),
+        pygame.image.load("asset/dragon.png").convert_alpha(),
         (moul_size, moul_size),
     )
     image_stu_Fuit = pygame.transform.scale(
-        pygame.image.load(asset.DRAGON_PATH).convert_alpha(),
+        pygame.image.load("asset/dragon.png").convert_alpha(),
         (moul_size, moul_size),
     )
-    image_piscin_norm = pygame.image.load(asset.ELIOT_PATH).convert_alpha()
-    image_piscin_Fuit = pygame.image.load(asset.ELIOT_PATH).convert_alpha()
+    image_piscin_norm = pygame.image.load("asset/Eliot.png").convert_alpha()
+    image_piscin_Fuit = pygame.image.load("asset/Eliot.png").convert_alpha()
     image_wall0 = pygame.transform.scale(
         pygame.image.load("asset/sprite_None.png").convert_alpha(), (60, 60)
     )
@@ -538,7 +556,9 @@ if __name__ == "__main__":
     image_wall1101 = pygame.transform.scale(
         pygame.image.load("asset/sprite_NSW.png").convert_alpha(), (60, 60)
     )
-    image_s_pac_gum = pygame.image.load(asset.PAC_GUM).convert_alpha()
+    image_s_pac_gum = pygame.image.load("asset/pac_gum.jpg").convert_alpha()
+    #################################
+
     game = True
     # moulinette = classforthegame.Moulinette()
     views = {
