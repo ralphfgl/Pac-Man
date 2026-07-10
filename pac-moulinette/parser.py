@@ -84,8 +84,7 @@ class Parser:
             data: dict[str, Any] = json.loads(clean)
         except json.JSONDecodeError as e:
             print(
-                f"[STEDERR] - Config file '{self.path}' is not valid JSON, \
-error: {e}",
+                f"[STEDERR] - Config file '{self.path}' is not valid JSON, error: {e}",
                 file=sys.stderr,
             )
             sys.exit(1)

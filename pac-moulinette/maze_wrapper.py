@@ -1,6 +1,6 @@
 from sys import stderr
 from parser import Parser
-from mazegenerator import MazeGenerator
+from mazegenerator import MazeGenerator  # type: ignore
 from parser import LvlConfig, Config
 from typing import List
 import random
@@ -82,7 +82,7 @@ if __name__ == "__main__":
     print(f"Maze: {maze.width}x{maze.height}")
 
     wc = "█"
-    row: List = []
+    row: List[Cellule] = []
     for y in range(len(maze.themaze)):
         row = maze.themaze[y]
         left: str = ""

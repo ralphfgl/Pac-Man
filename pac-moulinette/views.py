@@ -1,26 +1,27 @@
 import json
 import random
-from parser import Parser
+from parser import Parser, Config
 from enum import Enum
 from macro import *
 import sys
 from abc import ABC, abstractmethod
+from collections.abc import Iterable
 import pygame
 import classforthegame
-from maze_wrapper import MazeLoader
-import asset
+from maze_wrapper import MazeLoader, Maze
 from highscore import HighscoreManager
+from typing import List, Dict, Optional
 
 
 class Pacgum:
     """Pacgum class"""
 
-    def __init__(self, x, y):
+    def __init__(self, x: int, y: int) -> None:
         self.x = x
         self.y = y
         self.active = True
 
-    def draw(self, screen):
+    def draw(self, screen: pygame.Surface) -> None:
         if not self.active:
             return
         screen.blit(image_pacgum, (self.x, self.y))
@@ -29,12 +30,12 @@ class Pacgum:
 class SuperPacgum:
     """SuperPacgum class"""
 
-    def __init__(self, x, y):
+    def __init__(self, x: int, y: int) -> None:
         self.x = x
         self.y = y
         self.active = True
 
-    def draw(self, screen):
+    def draw(self, screen: pygame.Surface) -> None:
         if not self.active:
             return
         screen.blit(image_TIG, (self.x, self.y))
@@ -54,33 +55,34 @@ class GameState(Enum):
 class View(ABC):
     """Base class for all views"""
 
-    def __init__(self, screen, config):
+    def __init__(self, screen: pygame.Surface, config: Config) -> None:
+        """Initialize the view"""
         self.screen = screen
         self.config = config
-        self.next_state = None
+        self.next_state: Optional[GameState] = None
         self.font = pygame.font.Font(None, 48)
 
     @abstractmethod
-    def handle_event(self, events):
+    def handle_event(self, events: Iterable[pygame.event.Event]) -> None:
         """Process input events"""
         pass
 
     @abstractmethod
-    def draw(self):
+    def draw(self) -> None:
         """Render the view"""
         pass
 
-    def get_next_state(self):
+    def get_next_state(self) -> Optional[GameState]:
         """Return the next game state to transition to"""
         return self.next_state
 
-    def reset(self):
+    def reset(self) -> None:
         """Reset view state when entering"""
         self.next_state = None
 
 
 class MainMenuView(View):
-    def __init__(self, screen, config):
+    def __init__(self, screen: pygame.Surface, config: Config) -> None:
         super().__init__(screen, config)
         self.selected_item = 0
         self.menu_items = [
@@ -90,7 +92,7 @@ class MainMenuView(View):
             ("Exit", None),
         ]
 
-    def handle_event(self, events):
+    def handle_event(self, events: Iterable[pygame.event.Event]) -> None:
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
@@ -108,7 +110,7 @@ class MainMenuView(View):
                         sys.exit()
                     self.next_state = next_state
 
-    def draw(self):
+    def draw(self) -> None:
         self.screen.fill(BLACK)
         title = self.font.render("PAC-MAN", True, YELLOW)
         title_rect = title.get_rect(center=(SCREEN_WIDTH // 2, 150))
@@ -122,7 +124,7 @@ class MainMenuView(View):
 
 
 class PauseView(View):
-    def __init__(self, screen, config):
+    def __init__(self, screen: pygame.Surface, config: Config) -> None:
         super().__init__(screen, config)
         self.selected_item = 0
         self.menu_items = [
@@ -130,7 +132,7 @@ class PauseView(View):
             ("Main Menu", GameState.MAIN_MENU),
         ]
 
-    def handle_event(self, events):
+    def handle_event(self, events: Iterable[pygame.event.Event]) -> None:
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
@@ -146,7 +148,7 @@ class PauseView(View):
                 elif event.key == pygame.K_RETURN:
                     _, self.next_state = self.menu_items[self.selected_item]
 
-    def draw(self):
+    def draw(self) -> None:
         screen = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
         screen.fill(BLACK)
         self.screen.blit(screen, (0, 0))
@@ -165,16 +167,16 @@ class PauseView(View):
 class InstructionsView(View):
     """Display game controls"""
 
-    def __init__(self, screen, config):
+    def __init__(self, screen: pygame.Surface, config: Config) -> None:
         super().__init__(screen, config)
 
-    def handle_event(self, events):
+    def handle_event(self, events: Iterable[pygame.event.Event]) -> None:
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     self.next_state = GameState.MAIN_MENU
 
-    def draw(self):
+    def draw(self) -> None:
         self.screen.fill(BLACK)
         title = self.font.render("HOW TO PLAY", True, YELLOW)
         title_rect = title.get_rect(center=(SCREEN_WIDTH // 2, 50))
@@ -202,35 +204,35 @@ class InstructionsView(View):
 class HighscoreView(View):
     """Show leaderboard imported from highscore.json file"""
 
-    def __init__(self, screen, config):
+    def __init__(self, screen: pygame.Surface, config: Config) -> None:
         super().__init__(screen, config)
-        self.scores = []
+        self.scores: List[Dict[str, str]] = []
         self.highscore_file = config.highscore_filename
 
-    def reset(self):
+    def reset(self) -> None:
         """Load scores when entering view"""
 
         super().reset()
         self.scores = self._load_scores()
 
-    def _load_scores(self):
+    def _load_scores(self) -> List[Dict[str, str]]:
         """Load scores from JSON file"""
 
         try:
             with open(self.highscore_file, "r") as f:
-                scores = json.load(f)
+                scores: List[Dict[str, str]] = json.load(f)
                 scores.sort(key=lambda x: x["score"], reverse=True)
                 return scores[:10]
         except (FileNotFoundError, json.JSONDecodeError):
             return []
 
-    def handle_event(self, events):
+    def handle_event(self, events: Iterable[pygame.event.Event]) -> None:
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     self.next_state = GameState.MAIN_MENU
 
-    def draw(self):
+    def draw(self) -> None:
         self.screen.fill(BLACK)
         title = self.font.render("HIGH SCORES", True, YELLOW)
         title_rect = title.get_rect(center=(SCREEN_WIDTH / 2, 80))
@@ -271,7 +273,12 @@ class HighscoreView(View):
 class GameOverView(View):
     """Game over screen"""
 
-    def __init__(self, screen, config, highscore_manager: HighscoreManager):
+    def __init__(
+        self,
+        screen: pygame.Surface,
+        config: Config,
+        highscore_manager: HighscoreManager,
+    ) -> None:
         super().__init__(screen, config)
         self.highscore_manager = highscore_manager
         self.score = 0
@@ -279,13 +286,13 @@ class GameOverView(View):
         self.name = ""
         self.saved = False
 
-    def reset(self):
+    def reset(self) -> None:
         super().reset()
         self.entering_name = True
         self.name = ""
         self.saved = False
 
-    def handle_event(self, events):
+    def handle_event(self, events: Iterable[pygame.event.Event]) -> None:
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if self.entering_name == True:
@@ -308,7 +315,7 @@ class GameOverView(View):
                 elif event.key == pygame.K_RETURN:
                     self.next_state = GameState.MAIN_MENU
 
-    def draw(self):
+    def draw(self) -> None:
         self.screen.fill(BLACK)
         title = self.font.render("GAME OVER", True, RED)
         title_rect = title.get_rect(center=(SCREEN_WIDTH // 2, 130))
@@ -350,7 +357,12 @@ class GameOverView(View):
 class VictoryView(View):
     """Victory screen"""
 
-    def __init__(self, screen, config, highscore_manager: HighscoreManager):
+    def __init__(
+        self,
+        screen: pygame.Surface,
+        config: Config,
+        highscore_manager: HighscoreManager,
+    ):
         super().__init__(screen, config)
         self.highscore_manager = highscore_manager
         self.score = 0
@@ -358,13 +370,13 @@ class VictoryView(View):
         self.name = ""
         self.saved = False
 
-    def reset(self):
+    def reset(self) -> None:
         super().reset()
         self.entering_name = True
         self.name = ""
         self.saved = False
 
-    def handle_event(self, events):
+    def handle_event(self, events: Iterable[pygame.event.Event]) -> None:
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if self.entering_name == True:
@@ -387,7 +399,7 @@ class VictoryView(View):
                 elif event.key == pygame.K_RETURN:
                     self.next_state = GameState.MAIN_MENU
 
-    def draw(self):
+    def draw(self) -> None:
         self.screen.fill(BLACK)
         title = self.font.render("YOU WON !", True, GREEN)
         title_rect = title.get_rect(center=(SCREEN_WIDTH // 2, 130))
@@ -429,19 +441,19 @@ class VictoryView(View):
 class GameplayView(View):
     """Main game view with maze"""
 
-    def __init__(self, screen, config):
+    def __init__(self, screen: pygame.Surface, config: Config) -> None:
         super().__init__(screen, config)
-        self.maze_loader = None
-        self.maze = None
+        self.maze_loader: Optional[MazeLoader] = None
+        self.maze: Maze
         self.player = None
         self.current_level = 0
         self.score = 0
         self.lives = 0
         self.animation_counter = 0
-        self.pacgums = []
-        self.super_pacgums = []
+        self.pacgums: List[Pacgum] = []
+        self.super_pacgums: List[SuperPacgum] = []
 
-    def reset(self):
+    def reset(self) -> None:
         """Start game when entering this view"""
         super().reset()
         self.current_level = 0
@@ -449,20 +461,104 @@ class GameplayView(View):
         self.lives = self.config.lives
         self._load_level()
 
-    def _load_level(self):
+    def _load_level(self) -> None:
         """Load a level from config"""
         self.maze_loader = MazeLoader(
             self.config.levels[self.current_level], self.config
         )
         self.maze = self.maze_loader.load(apply_seed=(self.current_level == 0))
         self.moulinette = classforthegame.Moulinette()
-        self.stu = classforthegame.Stud()
+        # self.stu = classforthegame.Stud()
         self.piscin = classforthegame.Piscineux()
         self.level_start_ticks = pygame.time.get_ticks()
-        self.pause_start = None
+        self.pause_start: Optional[int] = None
         self._spawn()
 
-    def _spawn(self):
+    def _spawn(self) -> None:
+        level_setup = [
+            {
+                "stud": [(0, 1), (self.maze.width - 1, 0)],
+                "piscin": [(self.maze.width - 1, self.maze.height - 1)],
+            },
+            {
+                "stud": [
+                    (),
+                ],
+                "piscin": [
+                    (),
+                ],
+            },
+            {
+                "stud": [
+                    (),
+                ],
+                "piscin": [
+                    (),
+                ],
+            },
+            {
+                "stud": [
+                    (),
+                ],
+                "piscin": [
+                    (),
+                ],
+            },
+            {
+                "stud": [
+                    (),
+                ],
+                "piscin": [
+                    (),
+                ],
+            },
+            {
+                "stud": [
+                    (),
+                ],
+                "piscin": [
+                    (),
+                ],
+            },
+            {
+                "stud": [
+                    (),
+                ],
+                "piscin": [
+                    (),
+                ],
+            },
+            {
+                "stud": [
+                    (),
+                ],
+                "piscin": [
+                    (),
+                ],
+            },
+            {
+                "stud": [
+                    (),
+                ],
+                "piscin": [
+                    (),
+                ],
+            },
+            {
+                "stud": [
+                    (),
+                ],
+                "piscin": [
+                    (),
+                ],
+            },
+        ]
+        level = level_setup[self.current_level]
+        self.stud = []
+        for x, y in level["stud"]:
+            print(x, y)
+            self.stud.append(classforthegame.Stud([x * 60 - 10, y * 60 - 10]))
+
         self.pacgums = []
         super_position = [
             (0, 0),
@@ -483,6 +579,7 @@ class GameplayView(View):
             self.pacgums.append(Pacgum(x * 60, y * 60))
 
         self.super_pacgums = []
+        super_position.pop()
         for x, y in super_position:
             self.super_pacgums.append(SuperPacgum(x * 60, y * 60))
 
@@ -491,7 +588,7 @@ class GameplayView(View):
         remaining = self.config.level_max_time - (passed_time_ms / 1000)
         return max(0.0, remaining)
 
-    def handle_event(self, events):
+    def handle_event(self, events: Iterable[pygame.event.Event]) -> None:
         right = left = down = up = False
         if self.pause_start is not None:
             self.level_start_ticks += (
@@ -525,21 +622,21 @@ class GameplayView(View):
                     left = right = up = False
                     down = True
         for pacgum in self.pacgums:
-            if pacgum.active and self.moulinette.pos == (pacgum.x, pacgum.y):
+            if pacgum.active and self.moulinette.pos == [pacgum.x, pacgum.y]:
                 pacgum.active = False
                 self.score += self.config.points_per_pacgum
         for pacgum in self.pacgums:
             pacgum.draw(self.screen)
         for super_pacgum in self.super_pacgums:
-            if super_pacgum.active and self.moulinette.pos == (
+            if super_pacgum.active and self.moulinette.pos == [
                 super_pacgum.x,
                 super_pacgum.y,
-            ):
+            ]:
                 super_pacgum.active = False
                 self.score += self.config.points_per_super_pacgum
         for super_pacgum in self.super_pacgums:
             super_pacgum.draw(self.screen)
-        if self.moulinette.pos == self.stu.pos:
+        if self.moulinette.pos == self.stud[0].pos:
             self.lives -= 1
         if self.moulinette.pos == self.piscin.pos:
             self.lives -= 1
@@ -549,7 +646,7 @@ class GameplayView(View):
         image_piscin = image_piscin_norm
         image_stu = image_stu_norm
         self.piscin.pos = self.piscin.mouve(self.moulinette.pos, self.maze)
-        self.stu.pos = self.stu.mouve(self.maze, self.moulinette.pos)
+        self.stud[0].pos = self.stud[0].mouve(self.maze, self.moulinette.pos)
         self.moulinette.pos = self.moulinette.mouve(
             right, left, down, up, self.maze
         )
@@ -557,8 +654,8 @@ class GameplayView(View):
         self.screen.blit(
             image_stu,
             (
-                self.stu.pos[0] + 40 - moul_size / 2,
-                self.stu.pos[1] + 40 - moul_size / 2,
+                self.stud[0].pos[0] + 40 - moul_size / 2,
+                self.stud[0].pos[1] + 40 - moul_size / 2,
             ),
         )
         self.screen.blit(
@@ -574,14 +671,14 @@ class GameplayView(View):
         if self.current_level == 9 and True:
             self.next_state = GameState.VICTORY
 
-    def draw(self):
+    def draw(self) -> None:
         """Draw everything"""
         self.screen.fill(BLACK)
         self._draw_maze()
         self._draw_player()
         self._draw_hud()
 
-    def _draw_player(self):
+    def _draw_player(self) -> None:
         """Draw the player"""
         counter = self.animation_counter // 4
         if self.moulinette.one_dir == "W" or self.moulinette.one_dir is None:
@@ -619,7 +716,7 @@ class GameplayView(View):
                 ),
             )
 
-    def _draw_maze(self):
+    def _draw_maze(self) -> None:
         """Draw the maze"""
         for y in range(len(self.maze.themaze)):
             row = self.maze.themaze[y]
@@ -671,7 +768,7 @@ class GameplayView(View):
                     screen.blit(image_wall1101, (x * 60, y * 60))
                 w = 0
 
-    def _draw_hud(self):
+    def _draw_hud(self) -> None:
         """Draw heads-up display"""
         level_text = self.font.render(
             f"Level: {self.current_level + 1}", True, WHITE
@@ -722,8 +819,8 @@ if __name__ == "__main__":
         moulinette_front_images.append(
             pygame.transform.scale(
                 pygame.image.load(
-                    f"{BASE_DIR}/assets/sprite_cat_final{i}.png"
-                ),
+                    f"{BASE_DIR}/asset/sprite_cat{i}.png"
+                ).convert_alpha(),
                 (SPRITE_SIZE, SPRITE_SIZE),
             )
         )
@@ -733,8 +830,8 @@ if __name__ == "__main__":
         moulinette_back_images.append(
             pygame.transform.scale(
                 pygame.image.load(
-                    f"{BASE_DIR}/assets/sprite_cat_final{i}.png"
-                ),
+                    f"{BASE_DIR}/asset/sprite_cat{i}.png"
+                ).convert_alpha(),
                 (SPRITE_SIZE, SPRITE_SIZE),
             )
         )

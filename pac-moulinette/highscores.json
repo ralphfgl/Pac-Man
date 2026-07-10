@@ -1,18 +1,22 @@
 [
   {
     "name": "skjdf",
-    "score": 0
+    "score": "0"
   },
   {
     "name": "ralph",
-    "score": -15
+    "score": "0"
   },
   {
     "name": "test",
-    "score": 0
+    "score": "0"
   },
   {
     "name": "test",
-    "score": 0
+    "score": "0"
+  },
+  {
+    "name": "ralph",
+    "score": "0"
   }
 ]
