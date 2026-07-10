@@ -40,7 +40,7 @@ class Stud(Perssonage):
         self.stat = stat
         self.dir = dir
 
-    def chose_dir(self, direction: List) -> List:
+    def chose_dir(self, direction: str) -> Any:
         if direction == "W":
             self.pos[0] -= self.vitesse
         if direction == "E":
@@ -114,20 +114,6 @@ class Stud(Perssonage):
                 return True
         return False
 
-    def spe(self) -> Any:
-        if self.pv < 80 and self.pace == 4:
-            self.vitesse = self.vitesse * 1.2
-            self.pace -= 1
-        if self.pv < 60 and self.pace == 3:
-            self.vitesse = self.vitesse * 1.2
-            self.pace -= 1
-        if self.pv < 40 and self.pace == 2:
-            self.vitesse = self.vitesse * 1.2
-            self.pace -= 1
-        if self.pv < 20 and self.pace == 1:
-            self.vitesse = self.vitesse * 2
-            self.pace -= 1
-
     def mouve(self, maze, m_pos) -> List:
         direction = ["W", "E", "N", "S"]
         pos = []
@@ -142,9 +128,9 @@ class Stud(Perssonage):
         if self.open_gate(pos, "S", maze):
             direction.remove("S")
         if self.dir not in direction:
-            direction = random.choice(direction)
-            self.dir = direction
-            return self.chose_dir(direction)
+            tdir = random.choice(direction)
+            self.dir = tdir
+            return self.chose_dir(tdir)
         if self.dir == "W" and "E" in direction:
             direction.remove("E")
         elif self.dir == "E" and "W" in direction:
@@ -153,11 +139,11 @@ class Stud(Perssonage):
             direction.remove("N")
         elif self.dir == "N" and "S" in direction:
             direction.remove("S")
-        direction = random.choice(direction)
-        self.dir = direction
+        tdir = random.choice(direction)
+        self.dir = tdir
         pos.pop()
         pos.pop()
-        return self.chose_dir(direction[0])
+        return self.chose_dir(tdir)
 
 
 class Piscineux(Perssonage):
@@ -180,7 +166,7 @@ class Piscineux(Perssonage):
         self.one_dir = one_dir
         self.fuit = fuit
 
-    def chose_dir(self, direction: List) -> List:
+    def chose_dir(self, direction: str) -> Any:
         if direction[0] == "W":
             self.pos[0] -= self.vitesse
         if direction[0] == "E":
@@ -279,7 +265,7 @@ class Piscineux(Perssonage):
                 return True
         return False
 
-    def mouve(self, m_pos, maze) -> List:
+    def mouve(self, m_pos, maze) -> Any:
         direction = ["E", "W", "N", "S"]
         pos = []
         pos.append((self.pos[0] + 10) // 60)
@@ -295,7 +281,7 @@ class Piscineux(Perssonage):
             if "S" in direction and self.open_gate(pos, "S", maze):
                 direction.remove("S")
             if not direction:
-                return self.pos
+                return
         else:
             if "W" in direction and self.open_gate(pos, "W", maze):
                 direction.remove("W")
@@ -306,9 +292,9 @@ class Piscineux(Perssonage):
             if "S" in direction and self.open_gate(pos, "S", maze):
                 direction.remove("S")
             if self.dir not in direction:
-                direction = random.choice(direction)
-                self.dir = direction
-                return self.chose_dir(direction)
+                tdir = random.choice(direction)
+                self.dir = tdir
+                return self.chose_dir(tdir)
             if self.dir == "W" and "E" in direction:
                 direction.remove("E")
             elif self.dir == "E" and "W" in direction:
@@ -317,11 +303,11 @@ class Piscineux(Perssonage):
                 direction.remove("N")
             elif self.dir == "N" and "S" in direction:
                 direction.remove("S")
-            direction = random.choice(direction)
-            self.dir = direction
+            tdir = random.choice(direction)
+            self.dir = tdir
             pos.pop()
             pos.pop()
-        return self.chose_dir(direction[0])
+        return self.chose_dir(tdir)
 
 
 class Moulinette(Perssonage):
