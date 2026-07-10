@@ -467,8 +467,12 @@ class GameplayView(View):
             self.config.levels[self.current_level], self.config
         )
         self.maze = self.maze_loader.load(apply_seed=(self.current_level == 0))
-        self.moulinette = classforthegame.Moulinette()
-        # self.stu = classforthegame.Stud()
+        self.moulinette = classforthegame.Moulinette(
+            [
+                60 * (self.maze.width - 1) // 2 - 10,
+                60 * (self.maze.height - 1) // 2 - 10,
+            ]
+        )
         self.piscin = classforthegame.Piscineux()
         self.level_start_ticks = pygame.time.get_ticks()
         self.pause_start: Optional[int] = None
@@ -477,12 +481,17 @@ class GameplayView(View):
     def _spawn(self) -> None:
         level_setup = [
             {
-                "stud": [(0, 1), (self.maze.width - 1, 0)],
+                "stud": [
+                    (0, 1),
+                    (self.maze.width - 1, 1),
+                    (1, self.maze.height - 1),
+                ],
                 "piscin": [(self.maze.width - 1, self.maze.height - 1)],
             },
             {
                 "stud": [
-                    (),
+                    (0, 1),
+                    (self.maze.width - 1, 1),
                 ],
                 "piscin": [
                     (),
@@ -554,10 +563,9 @@ class GameplayView(View):
             },
         ]
         level = level_setup[self.current_level]
-        self.stud = []
+        self.studs = []
         for x, y in level["stud"]:
-            print(x, y)
-            self.stud.append(classforthegame.Stud([x * 60 - 10, y * 60 - 10]))
+            self.studs.append(classforthegame.Stud([x * 60 - 10, y * 60 - 10]))
 
         self.pacgums = []
         super_position = [
@@ -636,7 +644,7 @@ class GameplayView(View):
                 self.score += self.config.points_per_super_pacgum
         for super_pacgum in self.super_pacgums:
             super_pacgum.draw(self.screen)
-        if self.moulinette.pos == self.stud[0].pos:
+        if self.moulinette.pos == self.studs[0].pos:
             self.lives -= 1
         if self.moulinette.pos == self.piscin.pos:
             self.lives -= 1
@@ -646,18 +654,20 @@ class GameplayView(View):
         image_piscin = image_piscin_norm
         image_stu = image_stu_norm
         self.piscin.pos = self.piscin.mouve(self.moulinette.pos, self.maze)
-        self.stud[0].pos = self.stud[0].mouve(self.maze, self.moulinette.pos)
+        for stud in self.studs:
+            stud.pos = stud.mouve(self.maze, self.moulinette.pos)
         self.moulinette.pos = self.moulinette.mouve(
             right, left, down, up, self.maze
         )
         self._draw_player()
-        self.screen.blit(
-            image_stu,
-            (
-                self.stud[0].pos[0] + 40 - moul_size / 2,
-                self.stud[0].pos[1] + 40 - moul_size / 2,
-            ),
-        )
+        for stud in self.studs:
+            self.screen.blit(
+                image_stu,
+                (
+                    stud.pos[0] + 40 - moul_size / 2,
+                    stud.pos[1] + 40 - moul_size / 2,
+                ),
+            )
         self.screen.blit(
             image_piscin,
             (
