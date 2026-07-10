@@ -711,7 +711,7 @@ if __name__ == "__main__":
     pygame.init()
     highscore_manager = HighscoreManager(config.highscore_filename)
 
-    moul_size = 40
+    moul_size = 30
     taille = (SCREEN_WIDTH, SCREEN_HEIGHT)
     clok = pygame.time.Clock()
     pygame.display.set_caption("PAC-MAN")

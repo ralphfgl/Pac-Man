@@ -1,4 +1,5 @@
 from sys import stderr
+from parser import Parser
 from mazegenerator import MazeGenerator
 from parser import LvlConfig, Config
 from typing import List
@@ -72,8 +73,10 @@ class MazeLoader:
 if __name__ == "__main__":
     print("Testing maze")
     level = LvlConfig(width=16, height=12)
+    parser = Parser("../config.json")
+    config = parser.load()
 
-    maze_loader = MazeLoader(level)
+    maze_loader = MazeLoader(level, config)
     maze = maze_loader.load()
 
     print(f"Maze: {maze.width}x{maze.height}")
