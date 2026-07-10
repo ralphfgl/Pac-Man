@@ -1,6 +1,6 @@
-from mazegenerator import MazeGenerator
 from sys import stderr
-from parser import LvlConfig
+from mazegenerator import MazeGenerator
+from parser import LvlConfig, Config
 from typing import List
 import random
 import sys
@@ -39,17 +39,18 @@ class Maze:
 class MazeLoader:
     """Load the level config and generates the maze"""
 
-    def __init__(self, lvl: LvlConfig):
+    def __init__(self, lvl: LvlConfig, conf: Config):
         self.lvl = lvl
+        self.conf = conf
 
-    def load(self) -> Maze:
+    def load(self, apply_seed: bool = True) -> Maze:
         try:
+            if apply_seed and self.conf.seed is not None:
+                seed = self.conf.seed
+            else:
+                seed = random.randint(1, 9999)
             generator = MazeGenerator(
-                (self.lvl.width, self.lvl.height),
-                False,
-                seed=self.lvl.seed
-                if self.lvl.seed is not None
-                else random.randint(1, 9999),
+                (self.lvl.width, self.lvl.height), False, seed=seed
             )
 
         except Exception as e:
@@ -70,7 +71,7 @@ class MazeLoader:
 
 if __name__ == "__main__":
     print("Testing maze")
-    level = LvlConfig(width=16, height=12, seed=42)
+    level = LvlConfig(width=16, height=12)
 
     maze_loader = MazeLoader(level)
     maze = maze_loader.load()

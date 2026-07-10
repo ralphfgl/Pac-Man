@@ -25,7 +25,7 @@ class Perssonage:
 class Stud(Perssonage):
     def __init__(
         self,
-        pos: List = [80 * 11 + 1, 1],
+        pos: List = [80 * 1 + 1, 80 * 0 + 1],
         name: str = "Corentin",
         access: int = 1,
         pv: int = 100,
@@ -163,7 +163,7 @@ class Stud(Perssonage):
 class Piscineux(Perssonage):
     def __init__(
         self,
-        pos: List = [80 * 8 + 1, 160 + 1],
+        pos: List = [80 * 2 + 1, 80 * 1 + 1],
         name: str = "Jean",
         access: int = 1,
         pv: int = 100,

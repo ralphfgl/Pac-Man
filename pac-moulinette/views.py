@@ -1,4 +1,5 @@
 import json
+import random
 from parser import Parser
 from enum import Enum
 from macro import *
@@ -8,6 +9,35 @@ import pygame
 import classforthegame
 from maze_wrapper import MazeLoader
 import asset
+from highscore import HighscoreManager
+
+
+class Pacgum:
+    """Pacgum class"""
+
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.active = True
+
+    def draw(self, screen):
+        if not self.active:
+            return
+        screen.blit(image_pacgum, (self.x, self.y))
+
+
+class SuperPacgum:
+    """SuperPacgum class"""
+
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.active = True
+
+    def draw(self, screen):
+        if not self.active:
+            return
+        screen.blit(image_TIG, (self.x, self.y))
 
 
 class GameState(Enum):
@@ -18,6 +48,7 @@ class GameState(Enum):
     GAME_OVER = 5
     INSTRUCTIONS = 6
     LEVEL_COMPLETE = 7
+    VICTORY = 8
 
 
 class View(ABC):
@@ -240,30 +271,159 @@ class HighscoreView(View):
 class GameOverView(View):
     """Game over screen"""
 
-    def __init__(self, screen, config):
+    def __init__(self, screen, config, highscore_manager: HighscoreManager):
         super().__init__(screen, config)
+        self.highscore_manager = highscore_manager
         self.score = 0
+        self.entering_name = True
+        self.name = ""
+        self.saved = False
 
-    def set_score(self, score):
-        self.score = score
+    def reset(self):
+        super().reset()
+        self.entering_name = True
+        self.name = ""
+        self.saved = False
 
     def handle_event(self, events):
         for event in events:
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:
+                if self.entering_name == True:
+                    if event.key == pygame.K_RETURN:
+                        if self.name.strip():
+                            self.saved = self.highscore_manager.add_score(
+                                self.name.strip(), self.score
+                            )
+                        self.entering_name = False
+                    elif event.key == pygame.K_BACKSPACE:
+                        self.name = self.name[:-1]
+                    elif (
+                        event.unicode
+                        and event.unicode.isascii()
+                        and event.unicode.isalnum()
+                        or event.unicode == " "
+                        and len(self.name) < 10
+                    ):
+                        self.name += event.unicode
+                elif event.key == pygame.K_RETURN:
                     self.next_state = GameState.MAIN_MENU
 
     def draw(self):
         self.screen.fill(BLACK)
-        game_over = self.font.render("GAME OVER", True, RED)
-        game_over_rect = game_over.get_rect(center=(SCREEN_WIDTH // 2, 200))
-        self.screen.blit(game_over, game_over_rect)
+        title = self.font.render("GAME OVER", True, RED)
+        title_rect = title.get_rect(center=(SCREEN_WIDTH // 2, 130))
+        self.screen.blit(title, title_rect)
+
         score_text = self.font.render(f"Score: {self.score}", True, WHITE)
-        score_rect = score_text.get_rect(center=(SCREEN_WIDTH // 2, 350))
+        score_rect = score_text.get_rect(center=(SCREEN_WIDTH // 2, 230))
         self.screen.blit(score_text, score_rect)
-        back = self.font.render("Press RETURN to continue", True, GRAY)
-        back_rect = back.get_rect(center=(SCREEN_WIDTH // 2, 200))
-        self.screen.blit(back, back_rect)
+
+        if self.entering_name:
+            prompt = self.font.render("Enter your name:", True, YELLOW)
+            prompt_rect = prompt.get_rect(center=(SCREEN_WIDTH // 2, 330))
+            self.screen.blit(prompt, prompt_rect)
+
+            name = self.font.render(self.name + "_", True, GREEN)
+            name_rect = name.get_rect(center=(SCREEN_WIDTH // 2, 400))
+            self.screen.blit(name, name_rect)
+
+            instruction = self.font.render(
+                "Letters, numbers, spaces (max 10) - RETURN to confirm",
+                True,
+                GRAY,
+            )
+            hint_rect = instruction.get_rect(center=(SCREEN_WIDTH // 2, 460))
+            self.screen.blit(instruction, hint_rect)
+        else:
+            message = "Score saved !" if self.saved else "Score not saved"
+            text = self.font.render(message, True, WHITE)
+            self.screen.blit(
+                text,
+                text.get_rect(center=(SCREEN_WIDTH // 2, 300)),
+            )
+            back = self.font.render("Press RETURN to continue", True, GRAY)
+            self.screen.blit(
+                back, back.get_rect(center=(SCREEN_WIDTH // 2, 400))
+            )
+
+
+class VictoryView(View):
+    """Victory screen"""
+
+    def __init__(self, screen, config, highscore_manager: HighscoreManager):
+        super().__init__(screen, config)
+        self.highscore_manager = highscore_manager
+        self.score = 0
+        self.entering_name = True
+        self.name = ""
+        self.saved = False
+
+    def reset(self):
+        super().reset()
+        self.entering_name = True
+        self.name = ""
+        self.saved = False
+
+    def handle_event(self, events):
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if self.entering_name == True:
+                    if event.key == pygame.K_RETURN:
+                        if self.name.strip():
+                            self.saved = self.highscore_manager.add_score(
+                                self.name.strip(), self.score
+                            )
+                        self.entering_name = False
+                    elif event.key == pygame.K_BACKSPACE:
+                        self.name = self.name[:-1]
+                    elif (
+                        event.unicode
+                        and event.unicode.isascii()
+                        and event.unicode.isalnum()
+                        or event.unicode == " "
+                        and len(self.name) < 10
+                    ):
+                        self.name += event.unicode
+                elif event.key == pygame.K_RETURN:
+                    self.next_state = GameState.MAIN_MENU
+
+    def draw(self):
+        self.screen.fill(BLACK)
+        title = self.font.render("YOU WON !", True, GREEN)
+        title_rect = title.get_rect(center=(SCREEN_WIDTH // 2, 130))
+        self.screen.blit(title, title_rect)
+
+        score_text = self.font.render(f"Score: {self.score}", True, WHITE)
+        score_rect = score_text.get_rect(center=(SCREEN_WIDTH // 2, 230))
+        self.screen.blit(score_text, score_rect)
+
+        if self.entering_name:
+            prompt = self.font.render("Enter your name:", True, YELLOW)
+            prompt_rect = prompt.get_rect(center=(SCREEN_WIDTH // 2, 330))
+            self.screen.blit(prompt, prompt_rect)
+
+            name = self.font.render(self.name + "_", True, GREEN)
+            name_rect = name.get_rect(center=(SCREEN_WIDTH // 2, 400))
+            self.screen.blit(name, name_rect)
+
+            instruction = self.font.render(
+                "Letters, numbers, spaces (max 10) - RETURN to confirm",
+                True,
+                GRAY,
+            )
+            hint_rect = instruction.get_rect(center=(SCREEN_WIDTH // 2, 460))
+            self.screen.blit(instruction, hint_rect)
+        else:
+            message = "Score saved !" if self.saved else "Score not saved !"
+            text = self.font.render(message, True, WHITE)
+            self.screen.blit(
+                text,
+                text.get_rect(center=(SCREEN_WIDTH // 2, 300)),
+            )
+            back = self.font.render("Press RETURN to continue", True, GRAY)
+            self.screen.blit(
+                back, back.get_rect(center=(SCREEN_WIDTH // 2, 400))
+            )
 
 
 class GameplayView(View):
@@ -278,6 +438,8 @@ class GameplayView(View):
         self.score = 0
         self.lives = 0
         self.animation_counter = 0
+        self.pacgums = []
+        self.super_pacgums = []
 
     def reset(self):
         """Start game when entering this view"""
@@ -286,22 +448,63 @@ class GameplayView(View):
         self.score = 0
         self.lives = self.config.lives
         self._load_level()
-        # self.i = 0
 
     def _load_level(self):
         """Load a level from config"""
-        self.maze_loader = MazeLoader(self.config.levels[self.current_level])
-        self.maze = self.maze_loader.load()
+        self.maze_loader = MazeLoader(
+            self.config.levels[self.current_level], self.config
+        )
+        self.maze = self.maze_loader.load(apply_seed=(self.current_level == 0))
         self.moulinette = classforthegame.Moulinette()
         self.stu = classforthegame.Stud()
         self.piscin = classforthegame.Piscineux()
+        self.level_start_ticks = pygame.time.get_ticks()
+        self.pause_start = None
+        self._spawn()
+
+    def _spawn(self):
+        self.pacgums = []
+        super_position = [
+            (0, 0),
+            (self.maze.width - 1, 0),
+            (0, self.maze.height - 1),
+            (self.maze.width - 1, self.maze.height - 1),
+            (self.maze.width // 2, self.maze.height // 2),
+        ]
+
+        available_tiles = []
+        for y, row in enumerate(self.maze.themaze):
+            for x, cell in enumerate(row):
+                if cell.static or (x, y) in super_position:
+                    continue
+                available_tiles.append((x, y))
+        pacgum_position = random.sample(available_tiles, self.config.pacgum)
+        for x, y in pacgum_position:
+            self.pacgums.append(Pacgum(x * 60, y * 60))
+
+        self.super_pacgums = []
+        for x, y in super_position:
+            self.super_pacgums.append(SuperPacgum(x * 60, y * 60))
+
+    def _second_remaining(self) -> float:
+        passed_time_ms = pygame.time.get_ticks() - self.level_start_ticks
+        remaining = self.config.level_max_time - (passed_time_ms / 1000)
+        return max(0.0, remaining)
 
     def handle_event(self, events):
         right = left = down = up = False
+        if self.pause_start is not None:
+            self.level_start_ticks += (
+                pygame.time.get_ticks() - self.pause_start
+            )
+            self.pause_start = None
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
+                    self.pause_start = pygame.time.get_ticks()
                     self.next_state = GameState.PAUSED
+                if event.key == pygame.K_y:
+                    self.lives = 0
                 if event.key == pygame.K_ESCAPE:
                     sys.exit()
                 elif event.key == pygame.K_c:
@@ -321,7 +524,21 @@ class GameplayView(View):
                 elif event.key == pygame.K_DOWN:
                     left = right = up = False
                     down = True
-        screen.blit(image_s_pac_gum, (30, 30))
+        for pacgum in self.pacgums:
+            if pacgum.active and self.moulinette.pos == (pacgum.x, pacgum.y):
+                pacgum.active = False
+                self.score += self.config.points_per_pacgum
+        for pacgum in self.pacgums:
+            pacgum.draw(self.screen)
+        for super_pacgum in self.super_pacgums:
+            if super_pacgum.active and self.moulinette.pos == (
+                super_pacgum.x,
+                super_pacgum.y,
+            ):
+                super_pacgum.active = False
+                self.score += self.config.points_per_super_pacgum
+        for super_pacgum in self.super_pacgums:
+            super_pacgum.draw(self.screen)
         if self.moulinette.pos == self.stu.pos:
             self.lives -= 1
         if self.moulinette.pos == self.piscin.pos:
@@ -352,8 +569,10 @@ class GameplayView(View):
             ),
         )
         self.animation_counter = (self.animation_counter + 1) % 12
-        if self.lives <= 0:
+        if self.lives <= 0 or self._second_remaining() <= 0:
             self.next_state = GameState.GAME_OVER
+        if self.current_level == 9 and True:
+            self.next_state = GameState.VICTORY
 
     def draw(self):
         """Draw everything"""
@@ -365,7 +584,7 @@ class GameplayView(View):
     def _draw_player(self):
         """Draw the player"""
         counter = self.animation_counter // 4
-        if self.moulinette.one_dir == "E" or self.moulinette.one_dir is None:
+        if self.moulinette.one_dir == "W" or self.moulinette.one_dir is None:
             self.screen.blit(
                 moulinette_front_images[counter],
                 (
@@ -373,7 +592,7 @@ class GameplayView(View):
                     self.moulinette.pos[1] + 40 - moul_size / 2,
                 ),
             )
-        elif self.moulinette.one_dir == "W":
+        elif self.moulinette.one_dir == "E":
             self.screen.blit(
                 pygame.transform.flip(
                     moulinette_front_images[counter], True, False
@@ -385,7 +604,7 @@ class GameplayView(View):
             )
         elif self.moulinette.one_dir == "N":
             self.screen.blit(
-                pygame.transform.rotate(moulinette_front_images[counter], 90),
+                moulinette_back_images[counter],
                 (
                     self.moulinette.pos[0] + 40 - moul_size / 2,
                     self.moulinette.pos[1] + 40 - moul_size / 2,
@@ -393,7 +612,7 @@ class GameplayView(View):
             )
         elif self.moulinette.one_dir == "S":
             self.screen.blit(
-                pygame.transform.rotate(moulinette_front_images[counter], 270),
+                moulinette_front_images[counter],
                 (
                     self.moulinette.pos[0] + 40 - moul_size / 2,
                     self.moulinette.pos[1] + 40 - moul_size / 2,
@@ -457,19 +676,40 @@ class GameplayView(View):
         level_text = self.font.render(
             f"Level: {self.current_level + 1}", True, WHITE
         )
-        self.screen.blit(level_text, (210, SCREEN_HEIGHT - 30))
+        level_rect = level_text.get_rect(
+            center=(SCREEN_WIDTH - level_text.get_width(), 100)
+        )
+        self.screen.blit(level_text, level_rect)
 
         score_text = self.font.render(f"Score: {self.score}", True, WHITE)
-        self.screen.blit(score_text, (360, SCREEN_HEIGHT - 30))
+        score_rect = score_text.get_rect(
+            center=(SCREEN_WIDTH - score_text.get_width(), 200)
+        )
+        self.screen.blit(score_text, score_rect)
 
-        lives_text = self.font.render(f"Lives: {self.lives}", True, RED)
-        self.screen.blit(lives_text, (510, SCREEN_HEIGHT - 30))
+        lives_text = self.font.render(f"Lives: {self.lives}", True, WHITE)
+        lives_rect = lives_text.get_rect(
+            center=(SCREEN_WIDTH - lives_text.get_width(), 300)
+        )
+        self.screen.blit(lives_text, lives_rect)
+
+        remaining = int(self._second_remaining())
+        minutes = remaining // 60
+        seconds = remaining % 60
+        timer_text = self.font.render(
+            f"Time: {minutes:02d}:{seconds:02d}", True, WHITE
+        )
+        timer_rect = timer_text.get_rect(
+            center=(SCREEN_WIDTH - timer_text.get_width(), 400)
+        )
+        self.screen.blit(timer_text, timer_rect)
 
 
 if __name__ == "__main__":
     parser = Parser("../config.json")
     config = parser.load()
     pygame.init()
+    highscore_manager = HighscoreManager(config.highscore_filename)
 
     moul_size = 40
     taille = (SCREEN_WIDTH, SCREEN_HEIGHT)
@@ -556,7 +796,13 @@ if __name__ == "__main__":
     image_wall1101 = pygame.transform.scale(
         pygame.image.load("asset/sprite_NSW.png").convert_alpha(), (60, 60)
     )
-    image_s_pac_gum = pygame.image.load("asset/pac_gum.jpg").convert_alpha()
+    image_pacgum = pygame.transform.scale(
+        pygame.image.load("asset/sprite_pacgum.png").convert_alpha(), (30, 30)
+    )
+    image_TIG = pygame.transform.scale(
+        pygame.image.load("asset/sprite_TIG.png").convert_alpha(), (30, 30)
+    )
+
     #################################
 
     game = True
@@ -567,7 +813,8 @@ if __name__ == "__main__":
         GameState.PAUSED: PauseView(screen, config),
         GameState.INSTRUCTIONS: InstructionsView(screen, config),
         GameState.HIGH_SCORES: HighscoreView(screen, config),
-        GameState.GAME_OVER: GameOverView(screen, config),
+        GameState.GAME_OVER: GameOverView(screen, config, highscore_manager),
+        GameState.VICTORY: VictoryView(screen, config, highscore_manager),
     }
 
     current_state = GameState.MAIN_MENU

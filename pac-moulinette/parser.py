@@ -13,9 +13,8 @@ class LvlConfig(BaseModel):
             seed: optional seed to generate the maze
     """
 
-    width: int = Field(default=20, ge=12, le=40)
-    height: int = Field(default=20, ge=12, le=24)
-    seed: Optional[int] = Field(default=None)
+    width: int = Field(default=20, ge=14, le=40)
+    height: int = Field(default=20, ge=10, le=24)
 
 
 class Config(BaseModel):
@@ -34,7 +33,7 @@ class Config(BaseModel):
     points_per_super_pacgum: int = Field(default=50, ge=1, le=999)
     points_per_ghost: int = Field(default=200, ge=1, le=999)
     seed: int = Field(default=42)
-    level_max_time: int = Field(default=90, ge=30)
+    level_max_time: int = Field(default=90, ge=10)
 
 
 class Parser:
