@@ -3,7 +3,7 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent
 
-FPS = 60
+FPS = 120
 
 taille = (1280, 960)
 SCREEN_WIDTH = 1280

@@ -1,3 +1,15 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    views.py                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: rfeghali <rfeghali@learner.42.tech>        +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2026/07/10 21:08:23 by rfeghali          #+#    #+#              #
+#    Updated: 2026/07/10 21:10:26 by rfeghali         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
 import json
 import random
 from parser import Parser, Config
@@ -469,17 +481,16 @@ class GameplayView(View):
         self.maze = self.maze_loader.load(apply_seed=(self.current_level == 0))
         self.moulinette = classforthegame.Moulinette(
             [
-                60 * (self.maze.width - 1) // 2 - 10,
-                60 * (self.maze.height - 1) // 2 - 10,
+                60 * (self.maze.width // 2) - 10,
+                60 * (self.maze.height // 2) - 10,
             ]
         )
-        self.piscin = classforthegame.Piscineux()
         self.level_start_ticks = pygame.time.get_ticks()
         self.pause_start: Optional[int] = None
         self._spawn()
 
     def _spawn(self) -> None:
-        level_setup = [
+        self.level_setup = [
             {
                 "stud": [
                     (0, 1),
@@ -562,10 +573,16 @@ class GameplayView(View):
                 ],
             },
         ]
-        level = level_setup[self.current_level]
+        self.level = self.level_setup[self.current_level]
         self.studs = []
-        for x, y in level["stud"]:
+        for x, y in self.level["stud"]:
             self.studs.append(classforthegame.Stud([x * 60 - 10, y * 60 - 10]))
+
+        self.piscins = []
+        for x, y in self.level["piscin"]:
+            self.piscins.append(
+                classforthegame.Piscineux([x * 60 - 10, y * 60 - 10])
+            )
 
         self.pacgums = []
         super_position = [
@@ -584,7 +601,7 @@ class GameplayView(View):
                 available_tiles.append((x, y))
         pacgum_position = random.sample(available_tiles, self.config.pacgum)
         for x, y in pacgum_position:
-            self.pacgums.append(Pacgum(x * 60, y * 60))
+            self.pacgums.append(Pacgum(x * 60 - 10, y * 60 - 10))
 
         self.super_pacgums = []
         super_position.pop()
@@ -629,6 +646,8 @@ class GameplayView(View):
                 elif event.key == pygame.K_DOWN:
                     left = right = up = False
                     down = True
+
+        # pacgum logic
         for pacgum in self.pacgums:
             if pacgum.active and self.moulinette.pos == [pacgum.x, pacgum.y]:
                 pacgum.active = False
@@ -644,16 +663,48 @@ class GameplayView(View):
                 self.score += self.config.points_per_super_pacgum
         for super_pacgum in self.super_pacgums:
             super_pacgum.draw(self.screen)
-        if self.moulinette.pos == self.studs[0].pos:
+
+        # ghost collision
+        if self.moulinette.pos in [
+            self.studs[j].pos for j in range(len(self.studs))
+        ]:
             self.lives -= 1
-        if self.moulinette.pos == self.piscin.pos:
+            self.moulinette.pos = [
+                60 * (self.maze.width // 2) - 10,
+                60 * (self.maze.height // 2) - 10,
+            ]
+            for i, stud in enumerate(self.studs):
+                x, y = self.level["stud"][i]
+                stud.pos = [x * 60 - 10, y * 60 - 10]
+            for i, piscin in enumerate(self.piscins):
+                x, y = self.level["piscin"][i]
+                piscin.pos = [x * 60 - 10, y * 60 - 10]
+        if self.moulinette.pos in [
+            self.piscins[j].pos for j in range(len(self.piscins))
+        ]:
             self.lives -= 1
-        if self.moulinette.pos[0] // 80 == 0:
-            if self.moulinette.pos[1] // 80 == 0:
-                self.piscin.fuit = True
+            self.moulinette.pos = [
+                60 * (self.maze.width // 2) - 10,
+                60 * (self.maze.height // 2) - 10,
+            ]
+            for i, stud in enumerate(self.studs):
+                x, y = self.level["stud"][i]
+                stud.pos = [x * 60 - 10, y * 60 - 10]
+            for i, piscin in enumerate(self.piscins):
+                x, y = self.level["piscin"][i]
+                piscin.pos = [x * 60 - 10, y * 60 - 10]
+
+        # logique fuite a deplacer
+        # if self.moulinette.pos[0] // 80 == 0:
+        #     if self.moulinette.pos[1] // 80 == 0:
+        #         for piscin in self.piscins:
+        #             piscin.fuit = True
+
+        # drawing
         image_piscin = image_piscin_norm
         image_stu = image_stu_norm
-        self.piscin.pos = self.piscin.mouve(self.moulinette.pos, self.maze)
+        for piscin in self.piscins:
+            piscin.pos = piscin.mouve(self.moulinette.pos, self.maze)
         for stud in self.studs:
             stud.pos = stud.mouve(self.maze, self.moulinette.pos)
         self.moulinette.pos = self.moulinette.mouve(
@@ -668,18 +719,22 @@ class GameplayView(View):
                     stud.pos[1] + 40 - moul_size / 2,
                 ),
             )
-        self.screen.blit(
-            image_piscin,
-            (
-                self.piscin.pos[0] + 40 - moul_size / 2,
-                self.piscin.pos[1] + 40 - moul_size / 2,
-            ),
-        )
+        for piscin in self.piscins:
+            self.screen.blit(
+                image_piscin,
+                (
+                    piscin.pos[0] + 40 - moul_size / 2,
+                    piscin.pos[1] + 40 - moul_size / 2,
+                ),
+            )
         self.animation_counter = (self.animation_counter + 1) % 12
         if self.lives <= 0 or self._second_remaining() <= 0:
             self.next_state = GameState.GAME_OVER
-        if self.current_level == 9 and True:
-            self.next_state = GameState.VICTORY
+        if all([not pacgum.active for pacgum in self.pacgums]):
+            if self.current_level == 9:
+                self.next_state = GameState.VICTORY
+            else:
+                self.current_level += 1
 
     def draw(self) -> None:
         """Draw everything"""
