@@ -665,62 +665,62 @@ class GameplayView(View):
         # pacgum logic
         for pacgum in self.pacgums:
             pac_pos = [pacgum.x - 20, pacgum.y - 20]
-            if pacgum.active and self.Sherlock(self.moulinette.pos, pac_pos) is True:
+            if pacgum.active and self.Sherlock(
+                    self.moulinette.pos, pac_pos
+                    ) is True:
                 pacgum.active = False
                 self.score += self.config.points_per_pacgum
         for pacgum in self.pacgums:
             pacgum.draw(self.screen)
         for super_pacgum in self.super_pacgums:
-            if super_pacgum.active and self.moulinette.pos == [
-                super_pacgum.x,
-                super_pacgum.y,
-            ]:
+            sup_pac_pos = [super_pacgum.x - 20, super_pacgum.y - 20]
+            if super_pacgum.active and self.Sherlock(
+                    self.moulinette.pos, sup_pac_pos
+                    ) is True:
                 super_pacgum.active = False
                 self.score += self.config.points_per_super_pacgum
         for super_pacgum in self.super_pacgums:
             super_pacgum.draw(self.screen)
 
         # ghost collision
-        if self.moulinette.pos in [
-            self.studs[j].pos for j in range(len(self.studs))
-        ]:
-            self.lives -= 1
-            if self.maze.width % 2 == 0:
-                self.moulinette.pos = [
-                    60 * (self.maze.width // 2) - 10 - 60,
-                    60 * (self.maze.height // 2) - 10 - 60,
-                ]
-            else:
-                self.moulinette.pos = [
-                    60 * (self.maze.width // 2) - 10,
-                    60 * (self.maze.height // 2) - 10,
-                ]
-            for i, stud in enumerate(self.studs):
-                x, y = self.level["stud"][i]
-                stud.pos = [x * 60 - 10, y * 60 - 10]
-            for i, piscin in enumerate(self.piscins):
-                x, y = self.level["piscin"][i]
-                piscin.pos = [x * 60 - 10, y * 60 - 10]
-        if self.moulinette.pos in [
-            self.piscins[j].pos for j in range(len(self.piscins))
-        ]:
-            self.lives -= 1
-            if self.maze.width % 2 == 0:
-                self.moulinette.pos = [
-                    60 * (self.maze.width // 2) - 10 - 60,
-                    60 * (self.maze.height // 2) - 10 - 60,
-                ]
-            else:
-                self.moulinette.pos = [
-                    60 * (self.maze.width // 2) - 10,
-                    60 * (self.maze.height // 2) - 10,
-                ]
-            for i, stud in enumerate(self.studs):
-                x, y = self.level["stud"][i]
-                stud.pos = [x * 60 - 10, y * 60 - 10]
-            for i, piscin in enumerate(self.piscins):
-                x, y = self.level["piscin"][i]
-                piscin.pos = [x * 60 - 10, y * 60 - 10]
+        for j in range(len(self.studs)):
+            if self.Sherlock(self.moulinette.pos, self.studs[j].pos):
+                self.lives -= 1
+                if self.maze.width % 2 == 0:
+                    self.moulinette.pos = [
+                        60 * (self.maze.width // 2) - 10 - 60,
+                        60 * (self.maze.height // 2) - 10 - 60,
+                    ]
+                else:
+                    self.moulinette.pos = [
+                        60 * (self.maze.width // 2) - 10,
+                        60 * (self.maze.height // 2) - 10,
+                    ]
+                for i, stud in enumerate(self.studs):
+                    x, y = self.level["stud"][i]
+                    stud.pos = [x * 60 - 10, y * 60 - 10]
+                for i, piscin in enumerate(self.piscins):
+                    x, y = self.level["piscin"][i]
+                    piscin.pos = [x * 60 - 10, y * 60 - 10]
+        for j in range(len(self.piscins)):
+            if self.Sherlock(self.moulinette.pos, self.piscins[j].pos):
+                self.lives -= 1
+                if self.maze.width % 2 == 0:
+                    self.moulinette.pos = [
+                        60 * (self.maze.width // 2) - 10 - 60,
+                        60 * (self.maze.height // 2) - 10 - 60,
+                    ]
+                else:
+                    self.moulinette.pos = [
+                        60 * (self.maze.width // 2) - 10,
+                        60 * (self.maze.height // 2) - 10,
+                    ]
+                for i, stud in enumerate(self.studs):
+                    x, y = self.level["stud"][i]
+                    stud.pos = [x * 60 - 10, y * 60 - 10]
+                for i, piscin in enumerate(self.piscins):
+                    x, y = self.level["piscin"][i]
+                    piscin.pos = [x * 60 - 10, y * 60 - 10]
 
         # logique fuite a deplacer
         # if self.moulinette.pos[0] // 80 == 0:
