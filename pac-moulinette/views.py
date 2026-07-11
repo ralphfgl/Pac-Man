@@ -6,7 +6,7 @@
 #    By: rfeghali <rfeghali@learner.42.tech>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/07/10 21:08:23 by rfeghali          #+#    #+#              #
-#    Updated: 2026/07/10 21:10:26 by rfeghali         ###   ########.fr        #
+#    Updated: 2026/07/11 08:53:36 by rfeghali         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -496,8 +496,37 @@ class GameplayView(View):
                     (0, 1),
                     (self.maze.width - 1, 1),
                     (1, self.maze.height - 1),
+                    (self.maze.width - 1, self.maze.height - 1),
                 ],
-                "piscin": [(self.maze.width - 1, self.maze.height - 1)],
+                "piscin": [None],
+            },
+            {
+                "stud": [
+                    (0, 1),
+                    (self.maze.width - 1, 1),
+                    (1, self.maze.height - 1),
+                    (self.maze.width - 1, self.maze.height - 1),
+                ],
+            },
+            {
+                "stud": [
+                    (0, 1),
+                    (self.maze.width - 1, 1),
+                    (1, self.maze.height - 1),
+                ],
+                "piscin": [
+                    (self.maze.width - 1, self.maze.height - 1),
+                ],
+            },
+            {
+                "stud": [
+                    (0, 1),
+                    (self.maze.width - 1, 1),
+                    (1, self.maze.height - 1),
+                ],
+                "piscin": [
+                    (self.maze.width - 1, self.maze.height - 1),
+                ],
             },
             {
                 "stud": [
@@ -505,84 +534,75 @@ class GameplayView(View):
                     (self.maze.width - 1, 1),
                 ],
                 "piscin": [
-                    (),
+                    (1, self.maze.height - 1),
+                    (self.maze.width - 1, self.maze.height - 1),
                 ],
             },
             {
                 "stud": [
-                    (),
+                    (0, 1),
+                    (self.maze.width - 1, 1),
                 ],
                 "piscin": [
-                    (),
+                    (1, self.maze.height - 1),
+                    (self.maze.width - 1, self.maze.height - 1),
                 ],
             },
             {
                 "stud": [
-                    (),
+                    (0, 1),
                 ],
                 "piscin": [
-                    (),
+                    (self.maze.width - 1, 1),
+                    (1, self.maze.height - 1),
+                    (self.maze.width - 1, self.maze.height - 1),
                 ],
             },
             {
                 "stud": [
-                    (),
+                    (0, 1),
                 ],
                 "piscin": [
-                    (),
+                    (self.maze.width - 1, 1),
+                    (1, self.maze.height - 1),
+                    (self.maze.width - 1, self.maze.height - 1),
                 ],
             },
             {
-                "stud": [
-                    (),
-                ],
+                "stud": [None],
                 "piscin": [
+                    (0, 1),
                     (),
+                    (self.maze.width - 1, 1),
+                    (1, self.maze.height - 1),
+                    (self.maze.width - 1, self.maze.height - 1),
                 ],
             },
             {
-                "stud": [
-                    (),
-                ],
+                "stud": [None],
                 "piscin": [
+                    (0, 1),
                     (),
-                ],
-            },
-            {
-                "stud": [
-                    (),
-                ],
-                "piscin": [
-                    (),
-                ],
-            },
-            {
-                "stud": [
-                    (),
-                ],
-                "piscin": [
-                    (),
-                ],
-            },
-            {
-                "stud": [
-                    (),
-                ],
-                "piscin": [
-                    (),
+                    (self.maze.width - 1, 1),
+                    (1, self.maze.height - 1),
+                    (self.maze.width - 1, self.maze.height - 1),
                 ],
             },
         ]
         self.level = self.level_setup[self.current_level]
         self.studs = []
-        for x, y in self.level["stud"]:
-            self.studs.append(classforthegame.Stud([x * 60 - 10, y * 60 - 10]))
+        if self.level["stud"]:
+            for x, y in self.level["stud"]:
+                self.studs.append(
+                    classforthegame.Stud([x * 60 - 10, y * 60 - 10])
+                )
 
         self.piscins = []
-        for x, y in self.level["piscin"]:
-            self.piscins.append(
-                classforthegame.Piscineux([x * 60 - 10, y * 60 - 10])
-            )
+        if self.level["piscin"]:
+            for x, y in self.level["piscin"]:
+                self.piscins.append(
+                    classforthegame.Piscineux([x * 60 - 10, y * 60 - 10])
+                )
 
         self.pacgums = []
         super_position = [
