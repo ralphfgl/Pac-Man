@@ -463,11 +463,12 @@ class GameplayView(View):
 
     def _move_to_next_level(self):
         self.current_level += 1
-        if self.current_level == 9:
+        if self.current_level == 10:
             views[GameState.VICTORY].score = self.score
             self.next_state = GameState.VICTORY
-        self._load_level()
-        self._spawn()
+        else:
+            self._load_level()
+            self._spawn()
 
     def _load_level(self) -> None:
         """Load a level from config"""
@@ -657,10 +658,17 @@ class GameplayView(View):
                 if event.key == pygame.K_ESCAPE:
                     sys.exit()
                 elif event.key == pygame.K_c:
-                    self.current_level = (self.current_level + 1) % len(
-                        self.config.levels
+                    self.current_level = (self.current_level + 1) % (
+                        len(self.config.levels) + 1
                     )
+                    if self.current_level == 10:
+                        views[GameState.VICTORY].score = self.score
+                        self.next_state = GameState.VICTORY
+                        return
+
                     self._load_level()
+                elif event.key == pygame.K_w:
+                    self.next_state
                 elif event.key == pygame.K_RIGHT:
                     left = up = down = False
                     right = True
@@ -677,8 +685,12 @@ class GameplayView(View):
         # pacgum logic
         for pacgum in self.pacgums:
             pac_pos = [pacgum.x - 20, pacgum.y - 20]
-            pacgum.active = False
-            self.score += self.config.points_per_pacgum
+            if (
+                pacgum.active
+                and self.Sherlock(self.moulinette.pos, pac_pos) is True
+            ):
+                pacgum.active = False
+                self.score += self.config.points_per_pacgum
         for pacgum in self.pacgums:
             pacgum.draw(self.screen)
         for super_pacgum in self.super_pacgums:
@@ -769,7 +781,7 @@ class GameplayView(View):
         if self.lives <= 0 or self._second_remaining() <= 0:
             views[GameState.GAME_OVER].score = self.score
             self.next_state = GameState.GAME_OVER
-        if not all([not pacgum.active for pacgum in self.pacgums]):
+        if all([not pacgum.active for pacgum in self.pacgums]):
             self._move_to_next_level()
 
     def draw(self) -> None:
