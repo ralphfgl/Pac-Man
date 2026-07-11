@@ -41,7 +41,7 @@ class HighscoreManager:
 
     def add_score(self, name: str, score: int) -> bool:
         name = "".join(c for c in name[:10] if c.isalnum() or c == " ")
-        if name == "":
+        if not name:
             name = "???"
         score = max(0, int(score))
         self.scores.append({"name": name, "score": str(score)})
