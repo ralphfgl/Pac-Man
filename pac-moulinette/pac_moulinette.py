@@ -5,7 +5,7 @@ import asset
 
 pygame.init()
 
-level = LvlConfig(width=16, height=12, seed=21)
+level = LvlConfig(width=17, height=12, seed=21)
 maze_loader = MazeLoader(level)
 maze = maze_loader.load()
 
