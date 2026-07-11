@@ -391,7 +391,7 @@ class VictoryView(View):
     def handle_event(self, events: Iterable[pygame.event.Event]) -> None:
         for event in events:
             if event.type == pygame.KEYDOWN:
-                if self.entering_name == True:
+                if self.entering_name is True:
                     if event.key == pygame.K_RETURN:
                         if self.name.strip():
                             self.saved = self.highscore_manager.add_score(
@@ -479,12 +479,20 @@ class GameplayView(View):
             self.config.levels[self.current_level], self.config
         )
         self.maze = self.maze_loader.load(apply_seed=(self.current_level == 0))
-        self.moulinette = classforthegame.Moulinette(
-            [
-                60 * (self.maze.width // 2) - 10,
-                60 * (self.maze.height // 2) - 10,
-            ]
-        )
+        if self.maze.width % 2 == 0:
+            self.moulinette = classforthegame.Moulinette(
+                [
+                    60 * (self.maze.width // 2) - 10 - 60,
+                    60 * (self.maze.height // 2) - 10 - 60,
+                ]
+            )
+        else:
+            self.moulinette = classforthegame.Moulinette(
+                [
+                    60 * (self.maze.width // 2) - 10,
+                    60 * (self.maze.height // 2) - 10,
+                ]
+            )
         self.level_start_ticks = pygame.time.get_ticks()
         self.pause_start: Optional[int] = None
         self._spawn()
@@ -601,17 +609,24 @@ class GameplayView(View):
                 available_tiles.append((x, y))
         pacgum_position = random.sample(available_tiles, self.config.pacgum)
         for x, y in pacgum_position:
-            self.pacgums.append(Pacgum(x * 60 - 10, y * 60 - 10))
+            self.pacgums.append(Pacgum(x * 60 + 20, y * 60 + 20))
 
         self.super_pacgums = []
         super_position.pop()
         for x, y in super_position:
-            self.super_pacgums.append(SuperPacgum(x * 60, y * 60))
+            self.super_pacgums.append(SuperPacgum(x * 60 + 20, y * 60 + 20))
 
     def _second_remaining(self) -> float:
         passed_time_ms = pygame.time.get_ticks() - self.level_start_ticks
         remaining = self.config.level_max_time - (passed_time_ms / 1000)
         return max(0.0, remaining)
+
+    @staticmethod
+    def Sherlock(pos1: list[int], pos2: list[int]) -> bool:
+        if pos1[0] - pos2[0] > -15 and pos1[0] - pos2[0] < 15:
+            if pos1[1] - pos2[1] > -15 and pos1[1] - pos2[1] < 15:
+                return True
+        return False
 
     def handle_event(self, events: Iterable[pygame.event.Event]) -> None:
         right = left = down = up = False
@@ -649,7 +664,8 @@ class GameplayView(View):
 
         # pacgum logic
         for pacgum in self.pacgums:
-            if pacgum.active and self.moulinette.pos == [pacgum.x, pacgum.y]:
+            pac_pos = [pacgum.x - 20, pacgum.y - 20]
+            if pacgum.active and self.Sherlock(self.moulinette.pos, pac_pos) is True:
                 pacgum.active = False
                 self.score += self.config.points_per_pacgum
         for pacgum in self.pacgums:
@@ -669,10 +685,16 @@ class GameplayView(View):
             self.studs[j].pos for j in range(len(self.studs))
         ]:
             self.lives -= 1
-            self.moulinette.pos = [
-                60 * (self.maze.width // 2) - 10,
-                60 * (self.maze.height // 2) - 10,
-            ]
+            if self.maze.width % 2 == 0:
+                self.moulinette.pos = [
+                    60 * (self.maze.width // 2) - 10 - 60,
+                    60 * (self.maze.height // 2) - 10 - 60,
+                ]
+            else:
+                self.moulinette.pos = [
+                    60 * (self.maze.width // 2) - 10,
+                    60 * (self.maze.height // 2) - 10,
+                ]
             for i, stud in enumerate(self.studs):
                 x, y = self.level["stud"][i]
                 stud.pos = [x * 60 - 10, y * 60 - 10]
@@ -683,10 +705,16 @@ class GameplayView(View):
             self.piscins[j].pos for j in range(len(self.piscins))
         ]:
             self.lives -= 1
-            self.moulinette.pos = [
-                60 * (self.maze.width // 2) - 10,
-                60 * (self.maze.height // 2) - 10,
-            ]
+            if self.maze.width % 2 == 0:
+                self.moulinette.pos = [
+                    60 * (self.maze.width // 2) - 10 - 60,
+                    60 * (self.maze.height // 2) - 10 - 60,
+                ]
+            else:
+                self.moulinette.pos = [
+                    60 * (self.maze.width // 2) - 10,
+                    60 * (self.maze.height // 2) - 10,
+                ]
             for i, stud in enumerate(self.studs):
                 x, y = self.level["stud"][i]
                 stud.pos = [x * 60 - 10, y * 60 - 10]
@@ -706,7 +734,7 @@ class GameplayView(View):
         for piscin in self.piscins:
             piscin.pos = piscin.mouve(self.moulinette.pos, self.maze)
         for stud in self.studs:
-            stud.pos = stud.mouve(self.maze, self.moulinette.pos)
+            stud.pos = stud.mouve(self.maze)
         self.moulinette.pos = self.moulinette.mouve(
             right, left, down, up, self.maze
         )
@@ -908,8 +936,14 @@ if __name__ == "__main__":
         pygame.image.load("asset/dragon.png").convert_alpha(),
         (moul_size, moul_size),
     )
-    image_piscin_norm = pygame.image.load("asset/Eliot.png").convert_alpha()
-    image_piscin_Fuit = pygame.image.load("asset/Eliot.png").convert_alpha()
+    image_piscin_norm = pygame.transform.scale(
+        pygame.image.load("asset/dragon.png").convert_alpha(),
+        (moul_size, moul_size),
+    )
+    image_piscin_Fuit = pygame.transform.scale(
+        pygame.image.load("asset/dragon.png").convert_alpha(),
+        (moul_size, moul_size),
+    )
     image_wall0 = pygame.transform.scale(
         pygame.image.load("asset/sprite_None.png").convert_alpha(), (60, 60)
     )
@@ -959,10 +993,10 @@ if __name__ == "__main__":
         pygame.image.load("asset/sprite_NSW.png").convert_alpha(), (60, 60)
     )
     image_pacgum = pygame.transform.scale(
-        pygame.image.load("asset/sprite_pacgum.png").convert_alpha(), (30, 30)
+        pygame.image.load("asset/sprite_pacgum.png").convert_alpha(), (20, 20)
     )
     image_TIG = pygame.transform.scale(
-        pygame.image.load("asset/sprite_TIG.png").convert_alpha(), (30, 30)
+        pygame.image.load("asset/sprite_TIG.png").convert_alpha(), (20, 20)
     )
 
     #################################
