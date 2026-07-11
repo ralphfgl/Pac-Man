@@ -462,10 +462,12 @@ class Moulinette(Perssonage):
         vitesse: int = 2,
         next_dir: str = "rien",
         one_dir: str | Any = None,
+        god_mode: bool = False
     ):
         super().__init__(pos, name, access, pv, atk, vitesse)
         self.next_dir = next_dir
         self.one_dir = one_dir
+        self.god_mode = god_mode
 
     def open_gate(self, pos: List[int], way: str, maze: Any) -> bool:
         if way == "N":

@@ -464,6 +464,7 @@ class GameplayView(View):
         self.animation_counter = 0
         self.pacgums: List[Pacgum] = []
         self.super_pacgums: List[SuperPacgum] = []
+        self.rabitime: int = 0
 
     def reset(self) -> None:
         """Start game when entering this view"""
@@ -471,6 +472,7 @@ class GameplayView(View):
         self.current_level = 0
         self.score = 0
         self.lives = self.config.lives
+        self.rabitime: int = 0
         self._load_level()
 
     def _load_level(self) -> None:
@@ -678,13 +680,20 @@ class GameplayView(View):
                     self.moulinette.pos, sup_pac_pos
                     ) is True:
                 super_pacgum.active = False
+                self.moulinette.god_mode = True
+                self.rabitime = pygame.time.get_ticks()
                 self.score += self.config.points_per_super_pacgum
         for super_pacgum in self.super_pacgums:
             super_pacgum.draw(self.screen)
 
+        if self.moulinette.god_mode is True and pygame.time.get_ticks() - self.rabitime > 10000:
+            self.moulinette.god_mode = False
+            print(pygame.time.get_ticks() - self.rabitime)
+            print("end")
+            self.rabitime = 0
         # ghost collision
         for j in range(len(self.studs)):
-            if self.Sherlock(self.moulinette.pos, self.studs[j].pos):
+            if self.Sherlock(self.moulinette.pos, self.studs[j].pos) and self.moulinette.god_mode is False:
                 self.lives -= 1
                 if self.maze.width % 2 == 0:
                     self.moulinette.pos = [
@@ -703,7 +712,7 @@ class GameplayView(View):
                     x, y = self.level["piscin"][i]
                     piscin.pos = [x * 60 - 10, y * 60 - 10]
         for j in range(len(self.piscins)):
-            if self.Sherlock(self.moulinette.pos, self.piscins[j].pos):
+            if self.Sherlock(self.moulinette.pos, self.piscins[j].pos) and self.moulinette.god_mode is False:
                 self.lives -= 1
                 if self.maze.width % 2 == 0:
                     self.moulinette.pos = [
