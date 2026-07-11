@@ -181,7 +181,6 @@ class Piscineux(Perssonage):
         pass
 
     def faster(self, direction: List, m_pos) -> List[str]:
-        print(m_pos)
         long = self.pos[0] - m_pos[0]
         height = self.pos[1] - m_pos[1]
         if long != 0:
@@ -266,6 +265,7 @@ class Piscineux(Perssonage):
         return False
 
     def mouve(self, m_pos, maze) -> Any:
+        tdir = self.dir
         direction = ["E", "W", "N", "S"]
         pos = []
         pos.append((self.pos[0] + 10) // 60)
