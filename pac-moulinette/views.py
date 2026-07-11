@@ -1,15 +1,3 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    views.py                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: rfeghali <rfeghali@learner.42.tech>        +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2026/07/10 21:08:23 by rfeghali          #+#    #+#              #
-#    Updated: 2026/07/10 21:10:26 by rfeghali         ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
-
 import json
 import random
 from parser import Parser, Config
@@ -473,6 +461,12 @@ class GameplayView(View):
         self.lives = self.config.lives
         self._load_level()
 
+    def _move_to_next_level(self):
+        self.current_level += 1
+        if self.current_level == 9:
+            self.next_state = GameState.VICTORY
+        self._load_level()
+
     def _load_level(self) -> None:
         """Load a level from config"""
         self.maze_loader = MazeLoader(
@@ -503,7 +497,6 @@ class GameplayView(View):
                 "stud": [
                     (0, 1),
                     (self.maze.width - 1, 1),
-                    (1, self.maze.height - 1),
                 ],
                 "piscin": [(self.maze.width - 1, self.maze.height - 1)],
             },
@@ -513,7 +506,8 @@ class GameplayView(View):
                     (self.maze.width - 1, 1),
                 ],
                 "piscin": [
-                    (),
+                    (1, self.maze.height - 1),
+                    (self.maze.width - 1, self.maze.height - 1),
                 ],
             },
             {
@@ -640,8 +634,6 @@ class GameplayView(View):
                 if event.key == pygame.K_p:
                     self.pause_start = pygame.time.get_ticks()
                     self.next_state = GameState.PAUSED
-                if event.key == pygame.K_y:
-                    self.lives = 0
                 if event.key == pygame.K_ESCAPE:
                     sys.exit()
                 elif event.key == pygame.K_c:
@@ -665,7 +657,10 @@ class GameplayView(View):
         # pacgum logic
         for pacgum in self.pacgums:
             pac_pos = [pacgum.x - 20, pacgum.y - 20]
-            if pacgum.active and self.Sherlock(self.moulinette.pos, pac_pos) is True:
+            if (
+                pacgum.active
+                and self.Sherlock(self.moulinette.pos, pac_pos) is True
+            ):
                 pacgum.active = False
                 self.score += self.config.points_per_pacgum
         for pacgum in self.pacgums:
@@ -759,10 +754,7 @@ class GameplayView(View):
         if self.lives <= 0 or self._second_remaining() <= 0:
             self.next_state = GameState.GAME_OVER
         if all([not pacgum.active for pacgum in self.pacgums]):
-            if self.current_level == 9:
-                self.next_state = GameState.VICTORY
-            else:
-                self.current_level += 1
+            self._move_to_next_level()
 
     def draw(self) -> None:
         """Draw everything"""
