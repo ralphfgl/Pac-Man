@@ -1,15 +1,3 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    views.py                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: rfeghali <rfeghali@learner.42.tech>        +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2026/07/10 21:08:23 by rfeghali          #+#    #+#              #
-#    Updated: 2026/07/10 21:10:26 by rfeghali         ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
-
 import json
 import random
 from parser import Parser, Config
@@ -293,9 +281,9 @@ class GameOverView(View):
     ) -> None:
         super().__init__(screen, config)
         self.highscore_manager = highscore_manager
-        self.score = 0
         self.entering_name = True
         self.name = ""
+        self.score = 0
         self.saved = False
 
     def reset(self) -> None:
@@ -475,6 +463,15 @@ class GameplayView(View):
         self.rabitime: int = 0
         self._load_level()
 
+    def _move_to_next_level(self):
+        self.current_level += 1
+        if self.current_level == 10:
+            views[GameState.VICTORY].score = self.score
+            self.next_state = GameState.VICTORY
+        else:
+            self._load_level()
+            self._spawn()
+
     def _load_level(self) -> None:
         """Load a level from config"""
         self.maze_loader = MazeLoader(
@@ -505,7 +502,6 @@ class GameplayView(View):
                 "stud": [
                     (0, 1),
                     (self.maze.width - 1, 1),
-                    (1, self.maze.height - 1),
                 ],
                 "piscin": [(self.maze.width - 1, self.maze.height - 1)],
             },
@@ -515,71 +511,88 @@ class GameplayView(View):
                     (self.maze.width - 1, 1),
                 ],
                 "piscin": [
-                    (),
+                    (1, self.maze.height - 1),
+                    (self.maze.width - 1, self.maze.height - 1),
                 ],
             },
             {
                 "stud": [
-                    (),
+                    (0, 1),
+                    (self.maze.width - 1, 1),
                 ],
                 "piscin": [
-                    (),
+                    (1, self.maze.height - 1),
+                    (self.maze.width - 1, self.maze.height - 1),
                 ],
             },
             {
                 "stud": [
-                    (),
+                    (0, 1),
+                    (self.maze.width - 1, 1),
                 ],
                 "piscin": [
-                    (),
+                    (1, self.maze.height - 1),
+                    (self.maze.width - 1, self.maze.height - 1),
                 ],
             },
             {
                 "stud": [
-                    (),
+                    (0, 1),
+                    (self.maze.width - 1, 1),
                 ],
                 "piscin": [
-                    (),
+                    (1, self.maze.height - 1),
+                    (self.maze.width - 1, self.maze.height - 1),
                 ],
             },
             {
                 "stud": [
-                    (),
+                    (0, 1),
+                    (self.maze.width - 1, 1),
                 ],
                 "piscin": [
-                    (),
+                    (1, self.maze.height - 1),
+                    (self.maze.width - 1, self.maze.height - 1),
                 ],
             },
             {
                 "stud": [
-                    (),
+                    (0, 1),
+                    (self.maze.width - 1, 1),
                 ],
                 "piscin": [
-                    (),
+                    (1, self.maze.height - 1),
+                    (self.maze.width - 1, self.maze.height - 1),
                 ],
             },
             {
                 "stud": [
-                    (),
+                    (0, 1),
+                    (self.maze.width - 1, 1),
                 ],
                 "piscin": [
-                    (),
+                    (1, self.maze.height - 1),
+                    (self.maze.width - 1, self.maze.height - 1),
                 ],
             },
             {
                 "stud": [
-                    (),
+                    (0, 1),
+                    (self.maze.width - 1, 1),
                 ],
                 "piscin": [
-                    (),
+                    (1, self.maze.height - 1),
+                    (self.maze.width - 1, self.maze.height - 1),
                 ],
             },
             {
                 "stud": [
-                    (),
+                    (0, 1),
+                    (self.maze.width - 1, 1),
                 ],
                 "piscin": [
-                    (),
+                    (1, self.maze.height - 1),
+                    (self.maze.width - 1, self.maze.height - 1),
                 ],
             },
         ]
@@ -647,10 +660,17 @@ class GameplayView(View):
                 if event.key == pygame.K_ESCAPE:
                     sys.exit()
                 elif event.key == pygame.K_c:
-                    self.current_level = (self.current_level + 1) % len(
-                        self.config.levels
+                    self.current_level = (self.current_level + 1) % (
+                        len(self.config.levels) + 1
                     )
+                    if self.current_level == 10:
+                        views[GameState.VICTORY].score = self.score
+                        self.next_state = GameState.VICTORY
+                        return
+
                     self._load_level()
+                elif event.key == pygame.K_w:
+                    self.next_state
                 elif event.key == pygame.K_RIGHT:
                     left = up = down = False
                     right = True
@@ -667,33 +687,42 @@ class GameplayView(View):
         # pacgum logic
         for pacgum in self.pacgums:
             pac_pos = [pacgum.x - 20, pacgum.y - 20]
-            if pacgum.active and self.Sherlock(
-                    self.moulinette.pos, pac_pos
-                    ) is True:
+            if (
+                pacgum.active
+                and self.Sherlock(self.moulinette.pos, pac_pos) is True
+            ):
                 pacgum.active = False
                 self.score += self.config.points_per_pacgum
         for pacgum in self.pacgums:
             pacgum.draw(self.screen)
         for super_pacgum in self.super_pacgums:
             sup_pac_pos = [super_pacgum.x - 20, super_pacgum.y - 20]
-            if super_pacgum.active and self.Sherlock(
-                    self.moulinette.pos, sup_pac_pos
-                    ) is True:
+            if (
+                super_pacgum.active
+                and self.Sherlock(self.moulinette.pos, sup_pac_pos) is True
+            ):
                 super_pacgum.active = False
                 self.moulinette.god_mode = True
                 self.rabitime = pygame.time.get_ticks()
+                for j in range(len(self.studs)):
+                    self.studs[j].fuit = True
+                for j in range(len(self.piscins)):
+                    self.piscins[j].fuit = True
                 self.score += self.config.points_per_super_pacgum
         for super_pacgum in self.super_pacgums:
             super_pacgum.draw(self.screen)
 
         if self.moulinette.god_mode is True and pygame.time.get_ticks() - self.rabitime > 10000:
             self.moulinette.god_mode = False
-            print(pygame.time.get_ticks() - self.rabitime)
-            print("end")
+            for j in range(len(self.studs)):
+                self.studs[j].fuit = False
+            for j in range(len(self.piscins)):
+                self.piscins[j].fuit = False
             self.rabitime = 0
+
         # ghost collision
         for j in range(len(self.studs)):
-            if self.Sherlock(self.moulinette.pos, self.studs[j].pos) and self.moulinette.god_mode is False:
+            if self.Sherlock(self.moulinette.pos, self.studs[j].pos) and self.studs[j].fuit is False:
                 self.lives -= 1
                 if self.maze.width % 2 == 0:
                     self.moulinette.pos = [
@@ -711,8 +740,13 @@ class GameplayView(View):
                 for i, piscin in enumerate(self.piscins):
                     x, y = self.level["piscin"][i]
                     piscin.pos = [x * 60 - 10, y * 60 - 10]
+            if self.Sherlock(self.moulinette.pos, self.studs[j].pos) and self.studs[j].fuit is True:
+                self.score += self.config.points_per_ghost
+                x, y = random.choice(self.level["stud"])
+                self.studs[j].pos = [x * 60 - 10, y * 60 - 10]
+                self.studs[j].fuit = False
         for j in range(len(self.piscins)):
-            if self.Sherlock(self.moulinette.pos, self.piscins[j].pos) and self.moulinette.god_mode is False:
+            if self.Sherlock(self.moulinette.pos, self.piscins[j].pos) and self.piscins[j].fuit is False:
                 self.lives -= 1
                 if self.maze.width % 2 == 0:
                     self.moulinette.pos = [
@@ -730,6 +764,11 @@ class GameplayView(View):
                 for i, piscin in enumerate(self.piscins):
                     x, y = self.level["piscin"][i]
                     piscin.pos = [x * 60 - 10, y * 60 - 10]
+            if self.Sherlock(self.moulinette.pos, self.piscins[j].pos) and self.piscins[j].fuit is True:
+                self.score += self.config.points_per_ghost
+                x, y = random.choice(self.level["piscin"])
+                self.piscins[j].pos = [x * 60 - 10, y * 60 - 10]
+                self.piscins[j].fuit = False
 
         # logique fuite a deplacer
         # if self.moulinette.pos[0] // 80 == 0:
@@ -766,12 +805,10 @@ class GameplayView(View):
             )
         self.animation_counter = (self.animation_counter + 1) % 12
         if self.lives <= 0 or self._second_remaining() <= 0:
+            views[GameState.GAME_OVER].score = self.score
             self.next_state = GameState.GAME_OVER
         if all([not pacgum.active for pacgum in self.pacgums]):
-            if self.current_level == 9:
-                self.next_state = GameState.VICTORY
-            else:
-                self.current_level += 1
+            self._move_to_next_level()
 
     def draw(self) -> None:
         """Draw everything"""

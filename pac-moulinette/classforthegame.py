@@ -30,15 +30,19 @@ class Stud(Perssonage):
         access: int = 1,
         pv: int = 100,
         atk: int = 50,
-        vitesse: int = 3,
+        vitesse: int = 4,
         dir: str = "Rien",
         life: int = 1,
         stat: int = 1,
+        fuit: bool = False,
+        v: bool = True,
     ):
         super().__init__(pos, name, access, pv, atk, vitesse)
         self.life = life
         self.stat = stat
         self.dir = dir
+        self.fuit = fuit
+        self.v = v
 
     def chose_dir(self, direction: str) -> List[int]:
         if direction == "W":
@@ -115,35 +119,43 @@ class Stud(Perssonage):
         return False
 
     def mouve(self, maze: Any) -> List[int]:
-        direction = ["W", "E", "N", "S"]
-        pos = []
-        pos.append((self.pos[0] + 10) // 60)
-        pos.append((self.pos[1] + 10) // 60)
-        if self.open_gate(pos, "W", maze):
-            direction.remove("W")
-        if self.open_gate(pos, "E", maze):
-            direction.remove("E")
-        if self.open_gate(pos, "N", maze):
-            direction.remove("N")
-        if self.open_gate(pos, "S", maze):
-            direction.remove("S")
-        if self.dir not in direction:
+        if self.v is False:
+            if self.fuit is False:
+                self.v = False
+            else:
+                self.v = True
+            direction = ["W", "E", "N", "S"]
+            pos = []
+            pos.append((self.pos[0] + 10) // 60)
+            pos.append((self.pos[1] + 10) // 60)
+            if self.open_gate(pos, "W", maze):
+                direction.remove("W")
+            if self.open_gate(pos, "E", maze):
+                direction.remove("E")
+            if self.open_gate(pos, "N", maze):
+                direction.remove("N")
+            if self.open_gate(pos, "S", maze):
+                direction.remove("S")
+            if self.dir not in direction:
+                tdir = random.choice(direction)
+                self.dir = tdir
+                return self.chose_dir(tdir)
+            if self.dir == "W" and "E" in direction:
+                direction.remove("E")
+            elif self.dir == "E" and "W" in direction:
+                direction.remove("W")
+            elif self.dir == "S" and "N" in direction:
+                direction.remove("N")
+            elif self.dir == "N" and "S" in direction:
+                direction.remove("S")
             tdir = random.choice(direction)
             self.dir = tdir
-            return self.chose_dir(tdir)
-        if self.dir == "W" and "E" in direction:
-            direction.remove("E")
-        elif self.dir == "E" and "W" in direction:
-            direction.remove("W")
-        elif self.dir == "S" and "N" in direction:
-            direction.remove("N")
-        elif self.dir == "N" and "S" in direction:
-            direction.remove("S")
-        tdir = random.choice(direction)
-        self.dir = tdir
-        pos.pop()
-        pos.pop()
-        return self.chose_dir(direction[0])
+            pos.pop()
+            pos.pop()
+            return self.chose_dir(direction[0])
+        else:
+            self.v = False
+            return self.pos
 
 
 class Piscineux(Perssonage):
@@ -159,12 +171,14 @@ class Piscineux(Perssonage):
         one_dir: str = "rien",
         life: int = 1,
         fuit: bool = False,
+        v: bool = True,
     ):
         super().__init__(pos, name, access, pv, atk, vitesse)
         self.life = life
         self.dir = dir
         self.one_dir = one_dir
         self.fuit = fuit
+        self.v = v
 
     def chose_dir(self, direction: str) -> List[int]:
         if direction[0] == "W":
@@ -281,7 +295,9 @@ class Piscineux(Perssonage):
                 direction.remove("S")
             if not direction:
                 return self.pos
-        else:
+            return self.chose_dir(direction[0])
+        elif self.v is False:
+            self.v = True
             if "W" in direction and self.open_gate(pos, "W", maze):
                 direction.remove("W")
             if "E" in direction and self.open_gate(pos, "E", maze):
@@ -306,8 +322,9 @@ class Piscineux(Perssonage):
             self.dir = tdir
             pos.pop()
             pos.pop()
-        return self.chose_dir(direction[0])
-
+            return self.chose_dir(direction[0])
+        self.v = False
+        return self.pos
 
 class Staf(Perssonage):
     def __init__(
@@ -322,12 +339,14 @@ class Staf(Perssonage):
         one_dir: str = "rien",
         life: int = 1,
         fuit: bool = False,
+        v: bool = True,
     ):
         super().__init__(pos, name, access, pv, atk, vitesse)
         self.life = life
         self.dir = dir
         self.one_dir = one_dir
         self.fuit = fuit
+        self.v = v
 
     def chose_dir(self, direction: str) -> List[int]:
         if direction[0] == "W":
@@ -423,7 +442,9 @@ class Staf(Perssonage):
                 direction.remove("S")
             if not direction:
                 return self.pos
-        else:
+            return self.chose_dir(direction[0])
+        elif self.v is False:
+            self.v = True
             if "W" in direction and self.open_gate(pos, "W", maze):
                 direction.remove("W")
             if "E" in direction and self.open_gate(pos, "E", maze):
@@ -448,7 +469,9 @@ class Staf(Perssonage):
             self.dir = tdir
             pos.pop()
             pos.pop()
-        return self.chose_dir(direction[0])
+            return self.chose_dir(direction[0])
+        self.v = False
+        return
 
 
 class Moulinette(Perssonage):
@@ -459,7 +482,7 @@ class Moulinette(Perssonage):
         access: int = 1,
         pv: int = 100,
         atk: int = 50,
-        vitesse: int = 2,
+        vitesse: int = 3,
         next_dir: str = "rien",
         one_dir: str | Any = None,
         god_mode: bool = False

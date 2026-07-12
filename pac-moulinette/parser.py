@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 from pydantic import BaseModel, Field, ValidationError
-from typing import Optional, List, Any
+from typing import List, Any
 import sys
 
 
