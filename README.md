@@ -1,4 +1,4 @@
-*This activity has been created as part of the 42 curriculum by <login1>[, <login2>[, <login3>]].*
+*This activity has been created as part of the 42 curriculum by rfeghali and sboucard.*
 
 # Pac-Moulinette
 
@@ -222,6 +222,13 @@ Key relationships:
 
 ## Project Management
 
+We used a simple Kanban workflow to organize the project.
+
+Tasks moved through the following stages:
+
+Backlog → To Do → In Progress → Review → Done
+
+This helped us keep track of the remaining work and distribute tasks between both teammates.
 
 Project management artifacts (planning board, meeting notes, task
 breakdown) are available in project_management/ directory

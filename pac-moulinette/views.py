@@ -712,7 +712,10 @@ class GameplayView(View):
         for super_pacgum in self.super_pacgums:
             super_pacgum.draw(self.screen)
 
-        if self.moulinette.god_mode is True and pygame.time.get_ticks() - self.rabitime > 10000:
+        if (
+            self.moulinette.god_mode is True
+            and pygame.time.get_ticks() - self.rabitime > 10000
+        ):
             self.moulinette.god_mode = False
             for j in range(len(self.studs)):
                 self.studs[j].fuit = False
@@ -722,7 +725,10 @@ class GameplayView(View):
 
         # ghost collision
         for j in range(len(self.studs)):
-            if self.Sherlock(self.moulinette.pos, self.studs[j].pos) and self.studs[j].fuit is False:
+            if (
+                self.Sherlock(self.moulinette.pos, self.studs[j].pos)
+                and self.studs[j].fuit is False
+            ):
                 self.lives -= 1
                 if self.maze.width % 2 == 0:
                     self.moulinette.pos = [
@@ -740,13 +746,19 @@ class GameplayView(View):
                 for i, piscin in enumerate(self.piscins):
                     x, y = self.level["piscin"][i]
                     piscin.pos = [x * 60 - 10, y * 60 - 10]
-            if self.Sherlock(self.moulinette.pos, self.studs[j].pos) and self.studs[j].fuit is True:
+            if (
+                self.Sherlock(self.moulinette.pos, self.studs[j].pos)
+                and self.studs[j].fuit is True
+            ):
                 self.score += self.config.points_per_ghost
                 x, y = random.choice(self.level["stud"])
                 self.studs[j].pos = [x * 60 - 10, y * 60 - 10]
                 self.studs[j].fuit = False
         for j in range(len(self.piscins)):
-            if self.Sherlock(self.moulinette.pos, self.piscins[j].pos) and self.piscins[j].fuit is False:
+            if (
+                self.Sherlock(self.moulinette.pos, self.piscins[j].pos)
+                and self.piscins[j].fuit is False
+            ):
                 self.lives -= 1
                 if self.maze.width % 2 == 0:
                     self.moulinette.pos = [
@@ -764,7 +776,10 @@ class GameplayView(View):
                 for i, piscin in enumerate(self.piscins):
                     x, y = self.level["piscin"][i]
                     piscin.pos = [x * 60 - 10, y * 60 - 10]
-            if self.Sherlock(self.moulinette.pos, self.piscins[j].pos) and self.piscins[j].fuit is True:
+            if (
+                self.Sherlock(self.moulinette.pos, self.piscins[j].pos)
+                and self.piscins[j].fuit is True
+            ):
                 self.score += self.config.points_per_ghost
                 x, y = random.choice(self.level["piscin"])
                 self.piscins[j].pos = [x * 60 - 10, y * 60 - 10]
