@@ -7,16 +7,17 @@ run:
 
 build:
 	rm -rf build dist
-	python3 -m PyInstaller \
+	python3 -m PyInstaller --onefile \
 		--windowed \
 		--name pac_moul \
 		--add-data "asset:asset" \
 		--add-data "config.json:." \
 		--add-data "highscores.json:." \
 		pac_moul.py
-	cp config.json dist/pac_moul/
-	cp README.txt dist/pac_moul/
-	cd dist && zip -r pac_moul_linux.zip pac_moul
+	cp config.json dist/
+	cp README.txt dist/
+	cp asset/ dist/ -r
+	zip -r pac_moul_linux.zip dist/
 
 debug:
 	python3 -m pdb pac_moul.py config.json

@@ -13,8 +13,8 @@ class LvlConfig(BaseModel):
             seed: optional seed to generate the maze
     """
 
-    width: int = Field(default=20, ge=14, le=40)
-    height: int = Field(default=20, ge=10, le=24)
+    width: int = Field(default=17, ge=14, le=23)
+    height: int = Field(default=15, ge=10, le=17)
 
 
 class Config(BaseModel):

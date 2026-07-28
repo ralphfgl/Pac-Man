@@ -515,6 +515,23 @@ class GameplayView(View):
             {
                 "stud": [
                     (0, 1),
+                    (1, self.maze.height - 1),
+                    (self.maze.width - 1, 1),
+                ],
+                "piscin": [(self.maze.width - 1, self.maze.height - 1)],
+            },
+            {
+                "stud": [
+                    (0, 1),
+                    (1, self.maze.height - 1),
+                    (self.maze.width - 1, 1),
+                ],
+                "piscin": [(self.maze.width - 1, self.maze.height - 1)],
+            },
+            {
+                "stud": [
+                    (0, 1),
+                    (1, self.maze.height - 1),
                     (self.maze.width - 1, 1),
                 ],
                 "piscin": [(self.maze.width - 1, self.maze.height - 1)],
@@ -562,50 +579,30 @@ class GameplayView(View):
             {
                 "stud": [
                     (0, 1),
-                    (self.maze.width - 1, 1),
                 ],
                 "piscin": [
                     (1, self.maze.height - 1),
+                    (self.maze.width - 1, 1),
                     (self.maze.width - 1, self.maze.height - 1),
                 ],
             },
             {
                 "stud": [
                     (0, 1),
-                    (self.maze.width - 1, 1),
                 ],
                 "piscin": [
                     (1, self.maze.height - 1),
+                    (self.maze.width - 1, 1),
                     (self.maze.width - 1, self.maze.height - 1),
                 ],
             },
             {
                 "stud": [
                     (0, 1),
-                    (self.maze.width - 1, 1),
                 ],
                 "piscin": [
                     (1, self.maze.height - 1),
-                    (self.maze.width - 1, self.maze.height - 1),
-                ],
-            },
-            {
-                "stud": [
-                    (0, 1),
                     (self.maze.width - 1, 1),
-                ],
-                "piscin": [
-                    (1, self.maze.height - 1),
-                    (self.maze.width - 1, self.maze.height - 1),
-                ],
-            },
-            {
-                "stud": [
-                    (0, 1),
-                    (self.maze.width - 1, 1),
-                ],
-                "piscin": [
-                    (1, self.maze.height - 1),
                     (self.maze.width - 1, self.maze.height - 1),
                 ],
             },
