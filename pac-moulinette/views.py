@@ -792,8 +792,12 @@ class GameplayView(View):
         #             piscin.fuit = True
 
         # drawing
-        image_piscin = image_piscin_norm
-        image_stu = image_stu_norm
+        if self.piscins[0].fuit is False:
+            image_piscin = image_piscin_norm
+            image_stu = image_stu_norm
+        else:
+            image_piscin = image_piscin_Fuit
+            image_stu = image_stu_Fuit
         for piscin in self.piscins:
             piscin.pos = piscin.mouve(self.moulinette.pos, self.maze)
         for stud in self.studs:
@@ -990,21 +994,27 @@ if __name__ == "__main__":
             )
         )
     image_stu_norm = pygame.transform.scale(
-        pygame.image.load("asset/dragon.png").convert_alpha(),
+        pygame.image.load("asset/sprite_ghosts1.png").convert_alpha(),
         (moul_size, moul_size),
     )
-    image_stu_Fuit = pygame.transform.scale(
-        pygame.image.load("asset/dragon.png").convert_alpha(),
-        (moul_size, moul_size),
-    )
+    image_stu_Fuit = image_stu_norm.copy()
+    image_stu_Fuit.fill((0, 0, 128, 255), special_flags=pygame.BLEND_RGBA_MULT)
+    # image_stu_Fuit = pygame.transform.scale(
+    #     pygame.image.load("asset/dragon.png").convert_alpha(),
+    #     (moul_size, moul_size),
+    # )
     image_piscin_norm = pygame.transform.scale(
-        pygame.image.load("asset/dragon.png").convert_alpha(),
+        pygame.image.load("asset/sprite_ghosts0.png").convert_alpha(),
         (moul_size, moul_size),
     )
-    image_piscin_Fuit = pygame.transform.scale(
-        pygame.image.load("asset/dragon.png").convert_alpha(),
-        (moul_size, moul_size),
+    image_piscin_Fuit = image_piscin_norm.copy()
+    image_piscin_Fuit.fill(
+        (0, 0, 128, 255), special_flags=pygame.BLEND_RGBA_MULT
     )
+    # image_piscin_Fuit = pygame.transform.scale(
+    #     pygame.image.load("asset/dragon.png").convert_alpha(),
+    #     (moul_size, moul_size),
+    # )
     image_wall0 = pygame.transform.scale(
         pygame.image.load("asset/sprite_None.png").convert_alpha(), (60, 60)
     )

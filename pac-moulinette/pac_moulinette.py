@@ -1,60 +1,60 @@
-#import pygame
-#import classforthegame
-#from maze_wrapper import MazeLoader, LvlConfig
-#import asset
+# import pygame
+# import classforthegame
+# from maze_wrapper import MazeLoader, LvlConfig
+# import asset
 
-#pygame.init()
+# pygame.init()
 
-#level = LvlConfig(width=17, height=12, seed=21)
-#maze_loader = MazeLoader(level)
-#maze = maze_loader.load()
+# level = LvlConfig(width=17, height=12, seed=21)
+# maze_loader = MazeLoader(level)
+# maze = maze_loader.load()
 
-#moul_size = 30
-#taille = (1280, 960)
-#clok = pygame.time.Clock()
-#pygame.display.set_caption(asset.DRAGON_PATH)
-#fenetre = pygame.display.set_mode(taille, pygame.RESIZABLE)
-#image_moulinette = pygame.transform.scale(
+# moul_size = 30
+# taille = (1280, 960)
+# clok = pygame.time.Clock()
+# pygame.display.set_caption(asset.DRAGON_PATH)
+# fenetre = pygame.display.set_mode(taille, pygame.RESIZABLE)
+# image_moulinette = pygame.transform.scale(
 #    pygame.image.load(asset.KNIGHT_PATH).convert_alpha(),
 #    (moul_size, moul_size),
-#)
-#image_stu_norm = pygame.transform.scale(
+# )
+# image_stu_norm = pygame.transform.scale(
 #    pygame.image.load(asset.DRAGON_PATH).convert_alpha(),
 #    (moul_size, moul_size),
-#)
-#image_stu_Fuit = pygame.transform.scale(
+# )
+# image_stu_Fuit = pygame.transform.scale(
 #    pygame.image.load(asset.DRAGON_PATH).convert_alpha(),
 #    (moul_size, moul_size),
-#)
-#image_piscin_norm = pygame.image.load(asset.ELIOT_PATH).convert_alpha()
-#image_piscin_Fuit = pygame.image.load(asset.ELIOT_PATH).convert_alpha()
-#image_wall0 = pygame.image.load(asset.WALL_0).convert_alpha()
-#image_wall1 = pygame.image.load(asset.WALL_1).convert_alpha()
-#image_wall10 = pygame.image.load(asset.WALL_10).convert_alpha()
-#image_wall11 = pygame.image.load(asset.WALL_11).convert_alpha()
-#image_wall100 = pygame.image.load(asset.WALL_100).convert_alpha()
-#image_wall101 = pygame.image.load(asset.WALL_101).convert_alpha()
-#image_wall110 = pygame.image.load(asset.WALL_110).convert_alpha()
-#image_wall111 = pygame.image.load(asset.WALL_111).convert_alpha()
-#image_wall1000 = pygame.image.load(asset.WALL_1000).convert_alpha()
-#image_wall1100 = pygame.image.load(asset.WALL_1100).convert_alpha()
-#image_wall1010 = pygame.image.load(asset.WALL_1010).convert_alpha()
-#image_wall1001 = pygame.image.load(asset.WALL_1001).convert_alpha()
-#image_wall1011 = pygame.image.load(asset.WALL_1011).convert_alpha()
-#image_wall1110 = pygame.image.load(asset.WALL_1110).convert_alpha()
-#image_wall1111 = pygame.image.load(asset.WALL_1111).convert_alpha()
-#image_wall1101 = pygame.image.load(asset.WALL_1101).convert_alpha()
-#image_s_pac_gum = pygame.image.load(asset.PAC_GUM).convert_alpha()
-#game = True
-#right = up = down = left = False
-#moulinette = classforthegame.Moulinette()
-#stu = classforthegame.Stud()
-#piscin = classforthegame.Piscineux()
-#pos_moulinette = moulinette.pos
-#pos_stu = stu.pos
-#pos_piscin = piscin.pos
-#i = 0
-#while game:
+# )
+# image_piscin_norm = pygame.image.load(asset.ELIOT_PATH).convert_alpha()
+# image_piscin_Fuit = pygame.image.load(asset.ELIOT_PATH).convert_alpha()
+# image_wall0 = pygame.image.load(asset.WALL_0).convert_alpha()
+# image_wall1 = pygame.image.load(asset.WALL_1).convert_alpha()
+# image_wall10 = pygame.image.load(asset.WALL_10).convert_alpha()
+# image_wall11 = pygame.image.load(asset.WALL_11).convert_alpha()
+# image_wall100 = pygame.image.load(asset.WALL_100).convert_alpha()
+# image_wall101 = pygame.image.load(asset.WALL_101).convert_alpha()
+# image_wall110 = pygame.image.load(asset.WALL_110).convert_alpha()
+# image_wall111 = pygame.image.load(asset.WALL_111).convert_alpha()
+# image_wall1000 = pygame.image.load(asset.WALL_1000).convert_alpha()
+# image_wall1100 = pygame.image.load(asset.WALL_1100).convert_alpha()
+# image_wall1010 = pygame.image.load(asset.WALL_1010).convert_alpha()
+# image_wall1001 = pygame.image.load(asset.WALL_1001).convert_alpha()
+# image_wall1011 = pygame.image.load(asset.WALL_1011).convert_alpha()
+# image_wall1110 = pygame.image.load(asset.WALL_1110).convert_alpha()
+# image_wall1111 = pygame.image.load(asset.WALL_1111).convert_alpha()
+# image_wall1101 = pygame.image.load(asset.WALL_1101).convert_alpha()
+# image_s_pac_gum = pygame.image.load(asset.PAC_GUM).convert_alpha()
+# game = True
+# right = up = down = left = False
+# moulinette = classforthegame.Moulinette()
+# stu = classforthegame.Stud()
+# piscin = classforthegame.Piscineux()
+# pos_moulinette = moulinette.pos
+# pos_stu = stu.pos
+# pos_piscin = piscin.pos
+# i = 0
+# while game:
 #    for event in pygame.event.get():
 #        if event.type == pygame.QUIT:
 #            game = False
