@@ -2,7 +2,19 @@ import json
 import random
 from pacmoulinette.parser import Parser, Config
 from enum import Enum
-from pacmoulinette.macro import *
+from pacmoulinette.macro import (
+    BASE_DIR,
+    FPS,
+    SCREEN_WIDTH,
+    SCREEN_HEIGHT,
+    SPRITE_SIZE,
+    BLACK,
+    GRAY,
+    WHITE,
+    YELLOW,
+    RED,
+    GREEN,
+)
 import sys
 from abc import ABC, abstractmethod
 from collections.abc import Iterable
@@ -61,6 +73,7 @@ class View(ABC):
         self.config = config
         self.next_state: Optional[GameState] = None
         self.font = pygame.font.Font(None, 48)
+        self.score = 0
 
     @abstractmethod
     def handle_event(self, events: Iterable[pygame.event.Event]) -> None:
@@ -112,7 +125,7 @@ class MainMenuView(View):
 
     def draw(self) -> None:
         self.screen.fill(BLACK)
-        title = self.font.render("PAC-MAN", True, YELLOW)
+        title = self.font.render("PAC-MOUL", True, YELLOW)
         title_rect = title.get_rect(center=(SCREEN_WIDTH // 2, 150))
         self.screen.blit(title, title_rect)
 
@@ -182,9 +195,10 @@ class InstructionsView(View):
         title_rect = title.get_rect(center=(SCREEN_WIDTH // 2, 50))
         self.screen.blit(title, title_rect)
         text = (
-            "Objectives:\nNavigate the maze, collect pacgum,\nand run from the ghosts\n\n\n"
+            "Objectives:\nNavigate the maze, collect pacgum,\n"
+            "and run from the ghosts\n\n\n"
             "\nCommands:"
-            "\nARROWS  - Move PacMan"
+            "\nARROWS  - Move PacMoul"
             "\nP       - Pause Game"
             "\nC       - Cheat Mode"
         )
@@ -295,7 +309,7 @@ class GameOverView(View):
     def handle_event(self, events: Iterable[pygame.event.Event]) -> None:
         for event in events:
             if event.type == pygame.KEYDOWN:
-                if self.entering_name == True:
+                if self.entering_name is True:
                     if event.key == pygame.K_RETURN:
                         if self.name.strip():
                             self.saved = self.highscore_manager.add_score(
@@ -460,17 +474,17 @@ class GameplayView(View):
         self.current_level = 0
         self.score = 0
         self.lives = self.config.lives
-        self.rabitime: int = 0
+        self.rabitime = 0
         self._load_level()
 
-    def _move_to_next_level(self):
+    def _move_to_next_level(self) -> None:
         self.current_level += 1
         if self.current_level == 10:
             views[GameState.VICTORY].score = self.score
             self.next_state = GameState.VICTORY
         else:
             self._load_level()
-            self._spawn()
+            # self._spawn()
 
     def _load_level(self) -> None:
         """Load a level from config"""
@@ -632,8 +646,10 @@ class GameplayView(View):
             self.super_pacgums.append(SuperPacgum(x * 60 + 20, y * 60 + 20))
 
     def _second_remaining(self) -> float:
-        passed_time_ms = pygame.time.get_ticks() - self.level_start_ticks
-        remaining = self.config.level_max_time - (passed_time_ms / 1000)
+        passed_time_ms = float(
+            pygame.time.get_ticks() - self.level_start_ticks
+        )
+        remaining = float(self.config.level_max_time) - (passed_time_ms / 1000)
         return max(0.0, remaining)
 
     @staticmethod
@@ -962,9 +978,9 @@ class GameplayView(View):
 
 if __name__ == "__main__":
     try:
-        if len(sys.argv) < 2:
+        if len(sys.argv) != 2:
             print("Usage: python3 pac_moul.py <config.json>")
-            exit(1)
+            sys.exit(1)
         parser = Parser(sys.argv[1])
         config = parser.load()
         pygame.init()
@@ -975,7 +991,6 @@ if __name__ == "__main__":
         clok = pygame.time.Clock()
         pygame.display.set_caption("PAC-MAN")
         screen = pygame.display.set_mode(taille, pygame.RESIZABLE)
-        ### LOADING THE ASSETS ###
         moulinette_front_images = []
         for i in range(0, 3):
             moulinette_front_images.append(

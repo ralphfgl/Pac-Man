@@ -1,0 +1,7 @@
+# requirements.txt
+pygame>=2.5.0
+pydantic>=2.0.0
+mypy>=1.0.0
+flake8>=6.0.0
+pyinstaller>=6.0.0
+./lib/mazegenerator-00001-py3-none-any.whl

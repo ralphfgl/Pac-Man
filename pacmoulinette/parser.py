@@ -84,7 +84,8 @@ class Parser:
             data: dict[str, Any] = json.loads(clean)
         except json.JSONDecodeError as e:
             print(
-                f"[STEDERR] - Config file '{self.path}' is not valid JSON, error: {e}",
+                f"[STEDERR] - Config file '{self.path}' "
+                f"is not valid JSON, error: {e}",
                 file=sys.stderr,
             )
             sys.exit(1)
@@ -116,8 +117,8 @@ class Parser:
                 key = str(err["loc"][0])
                 data_copy[key] = getattr(defaults, key)
                 print(
-                    f"[STDERR] - Invalid config field {key}, using default \
-value: {getattr(defaults, key)}",
+                    f"[STDERR] - Invalid config field {key}, using default "
+                    f"value: {getattr(defaults, key)}",
                     file=sys.stderr,
                 )
         return Config.model_validate(data_copy)
@@ -136,9 +137,8 @@ if __name__ == "__main__":
 
     print("\nPoints")
     print(
-        f" Pacgum, super pacgum, ghost: {config.points_per_pacgum}, {
-            config.points_per_super_pacgum
-        }, {config.points_per_ghost}"
+        f" Pacgum, super pacgum, ghost: {config.points_per_pacgum}, "
+        f"{config.points_per_super_pacgum}, {config.points_per_ghost}"
     )
 
     print("\nLevels")

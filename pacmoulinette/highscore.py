@@ -23,7 +23,7 @@ class HighscoreManager:
             return
 
         if not isinstance(data, list):
-            print(f"Invalid highscore file", file=sys.stderr)
+            print("Invalid highscore file", file=sys.stderr)
             return
 
         self.scores = []
@@ -34,7 +34,7 @@ class HighscoreManager:
                 self.scores.append(
                     {"name": name if name else "???", "score": score}
                 )
-            except Exception as e:
+            except Exception:
                 continue
         self.scores.sort(key=lambda x: x["score"], reverse=True)
         self.scores = self.scores[:10]

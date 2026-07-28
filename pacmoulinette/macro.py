@@ -1,11 +1,10 @@
-import pygame
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 FPS = 60
 
-taille = (1700, 960)
+# taille = (1700, 960)
 SCREEN_WIDTH = 1700
 SCREEN_HEIGHT = 960
 CELL_SIZE = 60

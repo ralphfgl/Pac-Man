@@ -1,6 +1,15 @@
 from sys import stderr
 from .parser import Parser
-from mazegenerator import MazeGenerator  # type: ignore
+
+try:
+    from mazegenerator import MazeGenerator
+except Exception as e:
+    print(
+        "[STDERR] - mazegenerator package not found."
+        f"Install from the wheel: {e}",
+        file=stderr,
+    )
+    exit(1)
 from .parser import LvlConfig, Config
 from typing import List
 import random
