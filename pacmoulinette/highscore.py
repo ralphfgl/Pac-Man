@@ -7,7 +7,7 @@ from typing import Dict, List
 class HighscoreManager:
     def __init__(self, filename: str) -> None:
         self.path = Path(filename)
-        self.scores: List[Dict[str, str]] = []
+        self.scores: List[Dict[str, int | str]] = []
         self.load()
 
     def load(self) -> None:
@@ -32,7 +32,7 @@ class HighscoreManager:
                 name = str(x["name"][:10].strip())
                 score = max(0, int(x["score"]))
                 self.scores.append(
-                    {"name": name if name else "???", "score": str(score)}
+                    {"name": name if name else "???", "score": score}
                 )
             except Exception as e:
                 continue
@@ -44,7 +44,7 @@ class HighscoreManager:
         if not name:
             name = "???"
         score = max(0, int(score))
-        self.scores.append({"name": name, "score": str(score)})
+        self.scores.append({"name": name, "score": score})
         self.scores.sort(key=lambda x: x["score"], reverse=True)
         self.scores = self.scores[:10]
         return self.save()

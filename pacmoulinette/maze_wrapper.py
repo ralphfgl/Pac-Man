@@ -1,7 +1,7 @@
 from sys import stderr
-from parser import Parser
+from .parser import Parser
 from mazegenerator import MazeGenerator  # type: ignore
-from parser import LvlConfig, Config
+from .parser import LvlConfig, Config
 from typing import List
 import random
 import sys

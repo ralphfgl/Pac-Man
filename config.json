@@ -3,7 +3,7 @@
   "highscore_filename": "highscores.json",
   "lives": 3,
   # max nb of pacgum per lvl
-  "pacgum": 1,
+  "pacgum": 42,
   "points_per_pacgum": 10,
   "points_per_super_pacgum": 50,
   "points_per_ghost": 200,
@@ -14,7 +14,7 @@
   #unknown key to test parsing
 
   "levels": [
-    {"width": 15, "height": 13},
+    {"width": 17, "height": 15},
     {"width": 17, "height": 15},
     {"width": 17, "height": 15},
     {"width": 17, "height": 15},

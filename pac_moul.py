@@ -1,15 +1,15 @@
 import json
 import random
-from parser import Parser, Config
+from pacmoulinette.parser import Parser, Config
 from enum import Enum
-from macro import *
+from pacmoulinette.macro import *
 import sys
 from abc import ABC, abstractmethod
 from collections.abc import Iterable
 import pygame
-import classforthegame
-from maze_wrapper import MazeLoader, Maze
-from highscore import HighscoreManager
+import pacmoulinette.classforthegame as classforthegame
+from pacmoulinette.maze_wrapper import MazeLoader, Maze
+from pacmoulinette.highscore import HighscoreManager
 from typing import List, Dict, Optional
 
 
@@ -961,153 +961,166 @@ class GameplayView(View):
 
 
 if __name__ == "__main__":
-    parser = Parser("../config.json")
-    config = parser.load()
-    pygame.init()
-    highscore_manager = HighscoreManager(config.highscore_filename)
+    try:
+        if len(sys.argv) < 2:
+            print("Usage: python3 pac_moul.py <config.json>")
+            exit(1)
+        parser = Parser(sys.argv[1])
+        config = parser.load()
+        pygame.init()
+        highscore_manager = HighscoreManager(config.highscore_filename)
 
-    moul_size = 30
-    taille = (SCREEN_WIDTH, SCREEN_HEIGHT)
-    clok = pygame.time.Clock()
-    pygame.display.set_caption("PAC-MAN")
-    screen = pygame.display.set_mode(taille, pygame.RESIZABLE)
-    ### LOADING THE ASSETS ###
-    moulinette_front_images = []
-    for i in range(0, 3):
-        moulinette_front_images.append(
-            pygame.transform.scale(
-                pygame.image.load(
-                    f"{BASE_DIR}/asset/sprite_cat{i}.png"
-                ).convert_alpha(),
-                (SPRITE_SIZE, SPRITE_SIZE),
+        moul_size = 30
+        taille = (SCREEN_WIDTH, SCREEN_HEIGHT)
+        clok = pygame.time.Clock()
+        pygame.display.set_caption("PAC-MAN")
+        screen = pygame.display.set_mode(taille, pygame.RESIZABLE)
+        ### LOADING THE ASSETS ###
+        moulinette_front_images = []
+        for i in range(0, 3):
+            moulinette_front_images.append(
+                pygame.transform.scale(
+                    pygame.image.load(
+                        f"{BASE_DIR}/asset/sprite_cat{i}.png"
+                    ).convert_alpha(),
+                    (SPRITE_SIZE, SPRITE_SIZE),
+                )
             )
+
+        moulinette_back_images = []
+        for i in range(3, 6):
+            moulinette_back_images.append(
+                pygame.transform.scale(
+                    pygame.image.load(
+                        f"{BASE_DIR}/asset/sprite_cat{i}.png"
+                    ).convert_alpha(),
+                    (SPRITE_SIZE, SPRITE_SIZE),
+                )
+            )
+        image_stu_norm = pygame.transform.scale(
+            pygame.image.load("asset/sprite_ghosts1.png").convert_alpha(),
+            (moul_size, moul_size),
+        )
+        image_stu_Fuit = image_stu_norm.copy()
+        image_stu_Fuit.fill(
+            (0, 0, 128, 255), special_flags=pygame.BLEND_RGBA_MULT
+        )
+        # image_stu_Fuit = pygame.transform.scale(
+        #     pygame.image.load("asset/dragon.png").convert_alpha(),
+        #     (moul_size, moul_size),
+        # )
+        image_piscin_norm = pygame.transform.scale(
+            pygame.image.load("asset/sprite_ghosts0.png").convert_alpha(),
+            (moul_size, moul_size),
+        )
+        image_piscin_Fuit = image_piscin_norm.copy()
+        image_piscin_Fuit.fill(
+            (0, 0, 128, 255), special_flags=pygame.BLEND_RGBA_MULT
+        )
+        # image_piscin_Fuit = pygame.transform.scale(
+        #     pygame.image.load("asset/dragon.png").convert_alpha(),
+        #     (moul_size, moul_size),
+        # )
+        image_wall0 = pygame.transform.scale(
+            pygame.image.load("asset/sprite_None.png").convert_alpha(),
+            (60, 60),
+        )
+        image_wall1 = pygame.transform.scale(
+            pygame.image.load("asset/sprite_N.png").convert_alpha(), (60, 60)
+        )
+        image_wall10 = pygame.transform.scale(
+            pygame.image.load("asset/sprite_E.png").convert_alpha(), (60, 60)
+        )
+        image_wall11 = pygame.transform.scale(
+            pygame.image.load("asset/sprite_NE.png").convert_alpha(), (60, 60)
+        )
+        image_wall100 = pygame.transform.scale(
+            pygame.image.load("asset/sprite_S.png").convert_alpha(), (60, 60)
+        )
+        image_wall101 = pygame.transform.scale(
+            pygame.image.load("asset/sprite_NS.png").convert_alpha(), (60, 60)
+        )
+        image_wall110 = pygame.transform.scale(
+            pygame.image.load("asset/sprite_SE.png").convert_alpha(), (60, 60)
+        )
+        image_wall111 = pygame.transform.scale(
+            pygame.image.load("asset/sprite_NSE.png").convert_alpha(), (60, 60)
+        )
+        image_wall1000 = pygame.transform.scale(
+            pygame.image.load("asset/sprite_W.png").convert_alpha(), (60, 60)
+        )
+        image_wall1100 = pygame.transform.scale(
+            pygame.image.load("asset/sprite_SW.png").convert_alpha(), (60, 60)
+        )
+        image_wall1010 = pygame.transform.scale(
+            pygame.image.load("asset/sprite_EW.png").convert_alpha(), (60, 60)
+        )
+        image_wall1001 = pygame.transform.scale(
+            pygame.image.load("asset/sprite_NW.png").convert_alpha(), (60, 60)
+        )
+        image_wall1011 = pygame.transform.scale(
+            pygame.image.load("asset/sprite_NEW.png").convert_alpha(), (60, 60)
+        )
+        image_wall1110 = pygame.transform.scale(
+            pygame.image.load("asset/sprite_SEW.png").convert_alpha(), (60, 60)
+        )
+        image_wall1111 = pygame.transform.scale(
+            pygame.image.load("asset/sprite_NSEW.png").convert_alpha(),
+            (60, 60),
+        )
+        image_wall1101 = pygame.transform.scale(
+            pygame.image.load("asset/sprite_NSW.png").convert_alpha(), (60, 60)
+        )
+        image_pacgum = pygame.transform.scale(
+            pygame.image.load("asset/sprite_pacgum.png").convert_alpha(),
+            (20, 20),
+        )
+        image_TIG = pygame.transform.scale(
+            pygame.image.load("asset/sprite_TIG.png").convert_alpha(), (20, 20)
         )
 
-    moulinette_back_images = []
-    for i in range(3, 6):
-        moulinette_back_images.append(
-            pygame.transform.scale(
-                pygame.image.load(
-                    f"{BASE_DIR}/asset/sprite_cat{i}.png"
-                ).convert_alpha(),
-                (SPRITE_SIZE, SPRITE_SIZE),
-            )
-        )
-    image_stu_norm = pygame.transform.scale(
-        pygame.image.load("asset/sprite_ghosts1.png").convert_alpha(),
-        (moul_size, moul_size),
-    )
-    image_stu_Fuit = image_stu_norm.copy()
-    image_stu_Fuit.fill((0, 0, 128, 255), special_flags=pygame.BLEND_RGBA_MULT)
-    # image_stu_Fuit = pygame.transform.scale(
-    #     pygame.image.load("asset/dragon.png").convert_alpha(),
-    #     (moul_size, moul_size),
-    # )
-    image_piscin_norm = pygame.transform.scale(
-        pygame.image.load("asset/sprite_ghosts0.png").convert_alpha(),
-        (moul_size, moul_size),
-    )
-    image_piscin_Fuit = image_piscin_norm.copy()
-    image_piscin_Fuit.fill(
-        (0, 0, 128, 255), special_flags=pygame.BLEND_RGBA_MULT
-    )
-    # image_piscin_Fuit = pygame.transform.scale(
-    #     pygame.image.load("asset/dragon.png").convert_alpha(),
-    #     (moul_size, moul_size),
-    # )
-    image_wall0 = pygame.transform.scale(
-        pygame.image.load("asset/sprite_None.png").convert_alpha(), (60, 60)
-    )
-    image_wall1 = pygame.transform.scale(
-        pygame.image.load("asset/sprite_N.png").convert_alpha(), (60, 60)
-    )
-    image_wall10 = pygame.transform.scale(
-        pygame.image.load("asset/sprite_E.png").convert_alpha(), (60, 60)
-    )
-    image_wall11 = pygame.transform.scale(
-        pygame.image.load("asset/sprite_NE.png").convert_alpha(), (60, 60)
-    )
-    image_wall100 = pygame.transform.scale(
-        pygame.image.load("asset/sprite_S.png").convert_alpha(), (60, 60)
-    )
-    image_wall101 = pygame.transform.scale(
-        pygame.image.load("asset/sprite_NS.png").convert_alpha(), (60, 60)
-    )
-    image_wall110 = pygame.transform.scale(
-        pygame.image.load("asset/sprite_SE.png").convert_alpha(), (60, 60)
-    )
-    image_wall111 = pygame.transform.scale(
-        pygame.image.load("asset/sprite_NSE.png").convert_alpha(), (60, 60)
-    )
-    image_wall1000 = pygame.transform.scale(
-        pygame.image.load("asset/sprite_W.png").convert_alpha(), (60, 60)
-    )
-    image_wall1100 = pygame.transform.scale(
-        pygame.image.load("asset/sprite_SW.png").convert_alpha(), (60, 60)
-    )
-    image_wall1010 = pygame.transform.scale(
-        pygame.image.load("asset/sprite_EW.png").convert_alpha(), (60, 60)
-    )
-    image_wall1001 = pygame.transform.scale(
-        pygame.image.load("asset/sprite_NW.png").convert_alpha(), (60, 60)
-    )
-    image_wall1011 = pygame.transform.scale(
-        pygame.image.load("asset/sprite_NEW.png").convert_alpha(), (60, 60)
-    )
-    image_wall1110 = pygame.transform.scale(
-        pygame.image.load("asset/sprite_SEW.png").convert_alpha(), (60, 60)
-    )
-    image_wall1111 = pygame.transform.scale(
-        pygame.image.load("asset/sprite_NSEW.png").convert_alpha(), (60, 60)
-    )
-    image_wall1101 = pygame.transform.scale(
-        pygame.image.load("asset/sprite_NSW.png").convert_alpha(), (60, 60)
-    )
-    image_pacgum = pygame.transform.scale(
-        pygame.image.load("asset/sprite_pacgum.png").convert_alpha(), (20, 20)
-    )
-    image_TIG = pygame.transform.scale(
-        pygame.image.load("asset/sprite_TIG.png").convert_alpha(), (20, 20)
-    )
+        #################################
 
-    #################################
+        game = True
+        # moulinette = classforthegame.Moulinette()
+        views = {
+            GameState.MAIN_MENU: MainMenuView(screen, config),
+            GameState.PLAYING: GameplayView(screen, config),
+            GameState.PAUSED: PauseView(screen, config),
+            GameState.INSTRUCTIONS: InstructionsView(screen, config),
+            GameState.HIGH_SCORES: HighscoreView(screen, config),
+            GameState.GAME_OVER: GameOverView(
+                screen, config, highscore_manager
+            ),
+            GameState.VICTORY: VictoryView(screen, config, highscore_manager),
+        }
 
-    game = True
-    # moulinette = classforthegame.Moulinette()
-    views = {
-        GameState.MAIN_MENU: MainMenuView(screen, config),
-        GameState.PLAYING: GameplayView(screen, config),
-        GameState.PAUSED: PauseView(screen, config),
-        GameState.INSTRUCTIONS: InstructionsView(screen, config),
-        GameState.HIGH_SCORES: HighscoreView(screen, config),
-        GameState.GAME_OVER: GameOverView(screen, config, highscore_manager),
-        GameState.VICTORY: VictoryView(screen, config, highscore_manager),
-    }
+        current_state = GameState.MAIN_MENU
+        current_view = views[current_state]
+        while game:
+            events = pygame.event.get()
+            for event in events:
+                if event.type == pygame.QUIT:
+                    game = False
 
-    current_state = GameState.MAIN_MENU
-    current_view = views[current_state]
-    while game:
-        events = pygame.event.get()
-        for event in events:
-            if event.type == pygame.QUIT:
-                game = False
+            current_view.draw()
+            current_view.handle_event(events)
 
-        current_view.draw()
-        current_view.handle_event(events)
+            next_state = current_view.get_next_state()
+            if next_state:
+                previous_state = current_state
+                current_state = next_state
+                current_view = views[current_state]
+                if not (
+                    current_state == GameState.PLAYING
+                    and previous_state == GameState.PAUSED
+                ):
+                    current_view.reset()
+                current_view.next_state = None
 
-        next_state = current_view.get_next_state()
-        if next_state:
-            previous_state = current_state
-            current_state = next_state
-            current_view = views[current_state]
-            if not (
-                current_state == GameState.PLAYING
-                and previous_state == GameState.PAUSED
-            ):
-                current_view.reset()
-            current_view.next_state = None
-
-        pygame.display.flip()
-        clok.tick(FPS)
-    pygame.quit()
-    sys.exit()
+            pygame.display.flip()
+            clok.tick(FPS)
+        pygame.quit()
+        sys.exit()
+    except Exception as e:
+        print(f"{e}")
